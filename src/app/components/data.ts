@@ -122,10 +122,11 @@ export function generateChecklist(profile: UserProfile): ChecklistItem[] {
   });
 
   if (profile.hasDisease && profile.diseases.length > 0) {
+    const diseaseLabels = profile.diseases.map(id => diseaseOptions.find(d => d.id === id)?.label).filter(Boolean).join("، ");
     items.push({
       id: "special_meds",
       title: "داروهای بیماری‌های خاص",
-      description: `داروهای مورد نیاز: ${profile.diseases.join("، ")}`,
+      description: `داروهای مورد نیاز برای بیماری‌های: ${diseaseLabels}`,
       category: "بهداشت و درمان",
       priority: "high",
       quantity: "ذخیره ۱ ماهه",
