@@ -98,7 +98,9 @@ export function DownloadModal({ isOpen, onClose, items, actions, profile, mode }
   .check { width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 4px; flex-shrink: 0; margin-top: 2px; }
   .checked { background: #27AE60; border-color: #27AE60; }
   .qty { color: #7A7A8C; font-size: 0.85rem; }
-  .badge-high { background: #FDEDEC; color: #C0392B; padding: 2px 8px; border-radius: 99px; font-size: 0.72rem; font-weight: 700; }
+  .badge-high { background: #C0392B15; color: #C0392B; padding: 2px 8px; border-radius: 99px; font-size: 0.72rem; font-weight: 700; }
+  .badge-medium { background: #E67E2215; color: #E67E22; padding: 2px 8px; border-radius: 99px; font-size: 0.72rem; font-weight: 700; }
+  .badge-low { background: #27AE6015; color: #27AE60; padding: 2px 8px; border-radius: 99px; font-size: 0.72rem; font-weight: 700; }
   .desc { color: #7A7A8C; font-size: 0.85rem; margin-top: 4px; }
   .footer { margin-top: 32px; color: #7A7A8C; font-size: 0.82rem; text-align: center; }
 </style>
@@ -117,7 +119,14 @@ export function DownloadModal({ isOpen, onClose, items, actions, profile, mode }
           html += `<div class="item">
 <div class="check ${item.checked ? "checked" : ""}"></div>
 <div>
-  <div>${item.title} ${item.priority === "high" ? '<span class="badge-high">ضروری</span>' : ""}</div>
+  <div>${item.title}
+    ${item.priority ?
+    (item.priority === "high" ? '<span class="badge-high">ضروری</span>' :
+    item.priority === "medium" ? '<span class="badge-medium">مهم</span>' :
+    item.priority === "low" ? '<span class="badge-low">توصیه‌شده</span>' :
+    "") :
+    ''}
+  </div>
   ${item.quantity ? `<div class="qty">${item.quantity}</div>` : ""}
   ${item.description ? `<div class="desc">${item.description}</div>` : ""}
 </div>
@@ -137,7 +146,14 @@ export function DownloadModal({ isOpen, onClose, items, actions, profile, mode }
           html += `<div class="item">
 <div class="check ${action.checked ? "checked" : ""}"></div>
 <div>
-  <div>${action.title} ${action.priority === "high" ? '<span class="badge-high">ضروری</span>' : ""}</div>
+  <div>${action.title}
+    ${action.priority ?
+    (action.priority === "high" ? '<span class="badge-high">ضروری</span>' :
+    action.priority === "medium" ? '<span class="badge-medium">مهم</span>' :
+    action.priority === "low" ? '<span class="badge-low">توصیه‌شده</span>' :
+    "") :
+    ''}
+  </div>
   <div class="desc">${action.description}</div>
 </div>
 </div>`;
@@ -145,7 +161,7 @@ export function DownloadModal({ isOpen, onClose, items, actions, profile, mode }
       }
     }
 
-    html += `<div class="footer">تهیه‌شده توسط اپ آمادگی اضطراری | ${new Date().toLocaleDateString("fa-IR")}</div>
+    html += `<div class="footer">تهیه‌شده توسط سامانه تیک | ${new Date().toLocaleDateString("fa-IR")}</div>
 </body></html>`;
 
     const blob = new Blob([html], { type: "text/html;charset=utf-8" });
