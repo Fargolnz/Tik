@@ -2,12 +2,20 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { Check, Download } from "lucide-react";
 import { ActionItem } from "./data";
+import { toPersianNumber } from "./data";
+
 
 interface ActionsViewProps {
   actions: ActionItem[];
   onUpdate: (actions: ActionItem[]) => void;
   onDownload: () => void;
 }
+
+const priorityColors: Record<string, string> = {
+  high: "#C0392B",
+  medium: "#E67E22",
+  low: "#27AE60",
+};
 
 const phaseConfig = {
   before: {
@@ -25,7 +33,7 @@ const phaseConfig = {
     desc: "اقدامات فوری",
   },
   after: {
-    label: "پس از بحران",
+    label: "بعد از بحران",
     icon: "🔄",
     color: "#27AE60",
     bg: "#EAFAF1",
@@ -66,7 +74,7 @@ export function ActionsView({ actions, onUpdate, onDownload }: ActionsViewProps)
           </button>
         </div>
         <p style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.82rem" }}>
-          {checkedCount} از {phaseActions.length} اقدام انجام شده
+          {toPersianNumber(checkedCount)} از {toPersianNumber(phaseActions.length)} اقدام انجام شده
         </p>
       </div>
 
@@ -77,8 +85,8 @@ export function ActionsView({ actions, onUpdate, onDownload }: ActionsViewProps)
       >
         {(["before", "during", "after"] as const).map((phase) => {
           const pc = phaseConfig[phase];
-          const pCount = actions.filter((a) => a.phase === phase && a.checked).length;
-          const pTotal = actions.filter((a) => a.phase === phase).length;
+          const pCount = toPersianNumber(actions.filter((a) => a.phase === phase && a.checked).length);
+          const pTotal = toPersianNumber(actions.filter((a) => a.phase === phase).length);
           return (
             <button
               key={phase}
@@ -174,13 +182,39 @@ export function ActionsView({ actions, onUpdate, onDownload }: ActionsViewProps)
                   <span
                     className="px-2 py-0.5 rounded-full flex-shrink-0"
                     style={{
-                      backgroundColor: "#FDEDEC",
-                      color: "#C0392B",
-                      fontSize: "0.65rem",
+                      backgroundColor: `${priorityColors[action.priority]}15`,
+                      color: priorityColors[action.priority],
+                      fontSize: "0.68rem",
                       fontWeight: 700,
                     }}
                   >
                     ضروری
+                  </span>
+                )}
+                {action.priority === "medium" && (
+                  <span
+                    className="px-2 py-0.5 rounded-full flex-shrink-0"
+                    style={{
+                      backgroundColor: `${priorityColors[action.priority]}15`,
+                      color: priorityColors[action.priority],
+                      fontSize: "0.65rem",
+                      fontWeight: 700,
+                    }}
+                  >
+                    مهم
+                  </span>
+                )}
+                {action.priority === "low" && (
+                  <span
+                    className="px-2 py-0.5 rounded-full flex-shrink-0"
+                    style={{
+                      backgroundColor: `${priorityColors[action.priority]}15`,
+                      color: priorityColors[action.priority],
+                      fontSize: "0.65rem",
+                      fontWeight: 700,
+                    }}
+                  >
+                    توصیه‌شده
                   </span>
                 )}
               </div>

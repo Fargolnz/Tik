@@ -2,6 +2,8 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Check, Edit2, Trash2, Plus, Download, ChevronDown, ChevronUp } from "lucide-react";
 import { ChecklistItem } from "./data";
+import { toPersianNumber } from "./data";
+
 
 interface ChecklistViewProps {
   items: ChecklistItem[];
@@ -15,7 +17,7 @@ const categoryIcons: Record<string, string> = {
   "روشنایی و ارتباطات": "🔦",
   "مدارک و اطلاعات": "📄",
   "ابزار و تجهیزات": "🔧",
-  "پوشاک و محافظت": "👕",
+  "پوشاک و وسایل": "👕",
   سایر: "📦",
 };
 
@@ -41,6 +43,7 @@ export function ChecklistView({ items, onUpdate, onDownload }: ChecklistViewProp
   const [newQty, setNewQty] = useState("");
   const [newCategory, setNewCategory] = useState("سایر");
   const [filter, setFilter] = useState<"all" | "unchecked" | "checked">("all");
+  const [hoveredOption, setHoveredOption] = useState<string | null>(null);
 
   const categories = useMemo(() => {
     const cats = Array.from(new Set(items.map((i) => i.category)));
@@ -130,10 +133,10 @@ export function ChecklistView({ items, onUpdate, onDownload }: ChecklistViewProp
         {/* Progress */}
         <div className="mb-2 flex justify-between items-center">
           <span style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.8rem" }}>
-            {checkedCount} از {items.length} آیتم تهیه شده
+            {toPersianNumber(checkedCount)} از {toPersianNumber(items.length)} آیتم تهیه شده
           </span>
           <span style={{ color: "white", fontSize: "0.9rem", fontWeight: 700 }}>
-            {progress}٪
+            {toPersianNumber(progress)}٪
           </span>
         </div>
         <div className="w-full h-2 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.3)" }}>
@@ -151,9 +154,9 @@ export function ChecklistView({ items, onUpdate, onDownload }: ChecklistViewProp
         style={{ backgroundColor: "var(--card)", borderBottom: "1px solid var(--border)" }}
       >
         {[
-          { key: "all", label: `همه (${items.length})` },
-          { key: "unchecked", label: `باقی‌مانده (${items.length - checkedCount})` },
-          { key: "checked", label: `تهیه‌شده (${checkedCount})` },
+          { key: "all", label: `همه (${toPersianNumber(items.length)})` },
+          { key: "unchecked", label: `باقی‌مانده (${toPersianNumber(items.length - checkedCount)})` },
+          { key: "checked", label: `تهیه‌شده (${toPersianNumber(checkedCount)})` },
         ].map((f) => (
           <button
             key={f.key}
@@ -201,7 +204,7 @@ export function ChecklistView({ items, onUpdate, onDownload }: ChecklistViewProp
                       fontSize: "0.7rem",
                     }}
                   >
-                    {catItems.filter((i) => i.checked).length}/{catItems.length}
+                    {toPersianNumber(catItems.filter((i) => i.checked).length)}/{toPersianNumber(catItems.length)}
                   </span>
                 </div>
                 {collapsed ? (
@@ -344,12 +347,12 @@ export function ChecklistView({ items, onUpdate, onDownload }: ChecklistViewProp
             backgroundColor: showAddForm ? "var(--muted)" : "var(--primary)",
             color: showAddForm ? "var(--foreground)" : "white",
             fontFamily: "'Vazirmatn', sans-serif",
-            fontSize: "0.9rem",
+            fontSize: "0.8rem",
             fontWeight: 600,
           }}
         >
           <Plus size={18} />
-          افزودن آیتم دلخواه
+          افزودن مورد دلخواه
         </button>
       </div>
     </div>
@@ -454,12 +457,12 @@ function ChecklistItemRow({
                 {item.title}
                 </p>
                 <span
-                  className="px-1.5 py-0.5 rounded"
+                  className="px-1.5 py-0.5 rounded-full"
                   style={{
                     backgroundColor: `${priorityColors[item.priority]}15`,
                     color: priorityColors[item.priority],
                     fontSize: "0.68rem",
-                    fontWeight: 600,
+                    fontWeight: 700,
                   }}
                 >
                   {priorityLabels[item.priority]}

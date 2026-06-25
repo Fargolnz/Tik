@@ -12,7 +12,9 @@ import {
   ActionItem,
   generateChecklist,
   generateActions,
+  toPersianNumber,
 } from "./components/data";
+
 
 type Screen = "splash" | "questionnaire" | "main";
 type Tab = "checklist" | "actions";
@@ -200,16 +202,12 @@ export default function App() {
                   label="اقدامات"
                   badge={actions.filter((a) => !a.checked).length}
                 />
-                <button
+                <NavTab
+                  active={true}
                   onClick={handleReset}
-                  className="flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all active:scale-90"
-                  style={{ color: "var(--muted-foreground)" }}
-                >
-                  <RotateCcw size={20} />
-                  <span style={{ fontSize: "0.7rem", fontFamily: "'Vazirmatn', sans-serif" }}>
-                    شروع مجدد
-                  </span>
-                </button>
+                  icon={<RotateCcw size={20}/>}
+                  label="شروع مجدد"
+                />
               </div>
             </motion.div>
           )}
@@ -255,7 +253,7 @@ function NavTab({
       }}
     >
       {icon}
-      <span style={{ fontSize: "0.7rem", fontWeight: active ? 600 : 400 }}>{label}</span>
+      <span style={{ fontSize: "0.7rem", fontWeight: active ? 700 : 700 }}>{label}</span>
       {badge !== undefined && badge > 0 && (
         <span
           className="absolute top-1 left-1/2 w-4 h-4 rounded-full flex items-center justify-center"

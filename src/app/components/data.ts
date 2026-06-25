@@ -48,30 +48,35 @@ export const diseaseOptions = [
   { id: "hearing", label: "نقص شنوایی" },
 ];
 
+export function toPersianNumber(num: number | string): string {
+  const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+  const str = String(num);
+  return str.replace(/\d/g, (digit) => persianDigits[parseInt(digit)]);
+}
+
 export function generateChecklist(profile: UserProfile): ChecklistItem[] {
   const items: ChecklistItem[] = [];
 
-  // آب
+  // Water And Food
   const waterLiters = profile.familyCount * 0.5 * 3;
   items.push({
     id: "water",
     title: "آب آشامیدنی",
-    description: "برای هر نفر ۳ لیتر در روز",
+    description: "برای هر نفر نیم لیتر آب در روز",
     category: "آب و غذا",
     priority: "high",
-    quantity: `${waterLiters} لیتر (برای ۳ روز)`,
+    quantity: `${toPersianNumber(waterLiters)} لیتر (برای ۳ روز)`,
     checked: false,
     customizable: true,
   });
 
-  // غذا
   items.push({
     id: "food_canned",
     title: "کنسرو و غذای آماده",
     description: "غذاهای با ماندگاری بالا",
     category: "آب و غذا",
-    priority: "high",
-    quantity: `${profile.familyCount * 2} وعده`,
+    priority: "medium",
+    quantity: `${toPersianNumber(profile.familyCount * 2)} وعده`,
     checked: false,
     customizable: true,
   });
@@ -82,7 +87,7 @@ export function generateChecklist(profile: UserProfile): ChecklistItem[] {
     description: "مواد غذایی خشک با ماندگاری بالا",
     category: "آب و غذا",
     priority: "high",
-    quantity: `${profile.familyCount * 3 * 3} عدد برای ۳ روز`,
+    quantity: `${toPersianNumber(profile.familyCount * 3 * 3)} عدد برای ۳ روز`,
     checked: false,
     customizable: true,
   });
@@ -91,16 +96,30 @@ export function generateChecklist(profile: UserProfile): ChecklistItem[] {
     items.push({
       id: "baby_food",
       title: "غذای کودک و شیر خشک",
-      description: "برای کودکان زیر ۳ سال",
+      description: "خوراک کودکان زیر ۳ سال",
       category: "آب و غذا",
       priority: "high",
-      quantity: `ذخیره ۱ هفته‌ای برای ${profile.childCount}  کودک`,
+      quantity: `ذخیره ۱ هفته‌ای برای ${toPersianNumber(profile.childCount)}  کودک`,
       checked: false,
       customizable: true,
     });
   }
 
-  // کمک‌های اولیه
+  if (profile.hasPet) {
+    items.push({
+      id: "pet_food",
+      title: "غذای حیوان خانگی",
+      description: "غذای مخصوص حیوانات",
+      category: "آب و غذا",
+      priority: "medium",
+      quantity: "ذخیره ۳ روزه",
+      checked: false,
+      customizable: true,
+    });
+  }
+
+
+  // First Aids And Meds
   items.push({
     id: "first_aid_kit",
     title: "کیف کمک‌های اولیه",
@@ -161,14 +180,26 @@ export function generateChecklist(profile: UserProfile): ChecklistItem[] {
     });
   }
 
-  // روشنایی و ارتباطات
+  items.push({
+    id: "sanitation",
+    title: "لوازم بهداشتی",
+    description: "دستمال کاغذی، ژل ضدعفونی، صابون، پد بهداشتی",
+    category: "بهداشت و درمان",
+    priority: "medium",
+    quantity: "ذخیره ۲ هفته‌ای",
+    checked: false,
+    customizable: true,
+  });
+
+
+  // Lighting and communications
   items.push({
     id: "flashlight",
     title: "چراغ‌قوه و باتری",
     description: "برای قطعی برق",
     category: "روشنایی و ارتباطات",
     priority: "high",
-    quantity: `${Math.ceil(profile.familyCount / 2)} عدد`,
+    quantity: `${toPersianNumber(Math.ceil(profile.familyCount / 2))} عدد`,
     checked: false,
     customizable: true,
   });
@@ -178,7 +209,7 @@ export function generateChecklist(profile: UserProfile): ChecklistItem[] {
     title: "شمع و فندک",
     description: "منبع نور جایگزین",
     category: "روشنایی و ارتباطات",
-    priority: "medium",
+    priority: "high",
     quantity: "۱۰ عدد",
     checked: false,
     customizable: true,
@@ -189,7 +220,7 @@ export function generateChecklist(profile: UserProfile): ChecklistItem[] {
     title: "رادیو باتری‌دار",
     description: "برای دریافت اخبار بدون برق",
     category: "روشنایی و ارتباطات",
-    priority: "high",
+    priority: "low",
     checked: false,
     customizable: false,
   });
@@ -200,12 +231,13 @@ export function generateChecklist(profile: UserProfile): ChecklistItem[] {
     description: "شارژر قابل حمل برای موبایل",
     category: "روشنایی و ارتباطات",
     priority: "high",
-    quantity: `${profile.familyCount > 3 ? 2 : 1} عدد`,
+    quantity: `${toPersianNumber(profile.familyCount > 3 ? 2 : 1)} عدد`,
     checked: false,
     customizable: true,
   });
 
-  // مدارک
+
+  // Documents
   items.push({
     id: "documents",
     title: "کپی مدارک مهم",
@@ -237,14 +269,15 @@ export function generateChecklist(profile: UserProfile): ChecklistItem[] {
     customizable: true,
   });
 
-  // ابزار
+
+  // Tools
   items.push({
     id: "whistle",
     title: "سوت اضطراری",
     description: "برای جلب توجه در زیر آوار",
     category: "ابزار و تجهیزات",
     priority: "high",
-    quantity: `${profile.familyCount} عدد`,
+    quantity: `${toPersianNumber(profile.familyCount)} عدد`,
     checked: false,
     customizable: false,
   });
@@ -279,14 +312,15 @@ export function generateChecklist(profile: UserProfile): ChecklistItem[] {
     customizable: false,
   });
 
-  // پوشاک و محافظت
+
+  // Clothing
   items.push({
     id: "shoes",
     title: "کفش محکم و دستکش",
     description: "برای حرکت در آوار",
-    category: "پوشاک و محافظت",
+    category: "پوشاک و وسایل",
     priority: "high",
-    quantity: `برای ${profile.familyCount} نفر`,
+    quantity: `برای ${toPersianNumber(profile.familyCount)} نفر`,
     checked: false,
     customizable: true,
   });
@@ -295,9 +329,9 @@ export function generateChecklist(profile: UserProfile): ChecklistItem[] {
     id: "mask",
     title: "ماسک N95 یا FFP2",
     description: "در برابر گرد و غبار و گازها",
-    category: "پوشاک و محافظت",
+    category: "پوشاک و وسایل",
     priority: "medium",
-    quantity: `${profile.familyCount} عدد`,
+    quantity: `${toPersianNumber(profile.familyCount)} عدد`,
     checked: false,
     customizable: true,
   });
@@ -306,9 +340,20 @@ export function generateChecklist(profile: UserProfile): ChecklistItem[] {
     id: "warm_clothes",
     title: "لباس گرم اضافی",
     description: "برای هر عضو خانواده",
-    category: "پوشاک و محافظت",
+    category: "پوشاک و وسایل",
+    priority: "low",
+    quantity: `${toPersianNumber(profile.familyCount)} دست`,
+    checked: false,
+    customizable: true,
+  });
+
+  items.push({
+    id: "blanket",
+    title: "پتوی اضطراری (فویل نجات)",
+    description: "برای گرم نگه داشتن آسیب‌دیدگان",
+    category: "پوشاک و وسایل",
     priority: "medium",
-    quantity: `${profile.familyCount} دست`,
+    quantity: `${toPersianNumber(profile.familyCount)} عدد`,
     checked: false,
     customizable: true,
   });
@@ -318,7 +363,7 @@ export function generateChecklist(profile: UserProfile): ChecklistItem[] {
       id: "child_items",
       title: "لوازم ضروری کودک",
       description: "پوشک، پستانک، دارو، اسباب‌بازی آرام‌بخش",
-      category: "پوشاک و محافظت",
+      category: "پوشاک و وسایل",
       priority: "high",
       checked: false,
       customizable: true,
@@ -341,38 +386,14 @@ export function generateChecklist(profile: UserProfile): ChecklistItem[] {
     items.push({
       id: "pet_supplies",
       title: "لوازم حیوان خانگی",
-      description: "غذا، ظرف، قفس، مدارک واکسن",
-      category: "سایر",
+      description: "ظرف، قفس، قلاده، مدارک واکسن",
+      category: "پوشاک و وسایل",
       priority: "medium",
-      quantity: "ذخیره ۳ روزه",
       checked: false,
       customizable: true,
     });
   }
-
-  // بهداشت
-  items.push({
-    id: "sanitation",
-    title: "لوازم بهداشتی",
-    description: "دستمال کاغذی، ژل ضدعفونی، صابون، پد بهداشتی",
-    category: "بهداشت و درمان",
-    priority: "medium",
-    quantity: "ذخیره ۲ هفته‌ای",
-    checked: false,
-    customizable: true,
-  });
-
-  items.push({
-    id: "blanket",
-    title: "پتوی اضطراری (فویل نجات)",
-    description: "برای گرم نگه داشتن آسیب‌دیدگان",
-    category: "پوشاک و محافظت",
-    priority: "medium",
-    quantity: `${profile.familyCount} عدد`,
-    checked: false,
-    customizable: true,
-  });
-
+  
   if (profile.livingType === "apartment" && (profile.floor || 0) > 3) {
     items.push({
       id: "rope",
@@ -380,7 +401,7 @@ export function generateChecklist(profile: UserProfile): ChecklistItem[] {
       description: "برای فرار اضطراری از طبقات بالا",
       category: "ابزار و تجهیزات",
       priority: "high",
-      quantity: `${(profile.floor || 4) * 4} متر`,
+      quantity: `${toPersianNumber((profile.floor || 4) * 4)} متر`,
       checked: false,
       customizable: true,
     });
@@ -450,7 +471,7 @@ export function generateActions(profile: UserProfile): ActionItem[] {
       title: "گذراندن دوره کمک‌های اولیه",
       description:
         "دوره CPR و کمک‌های اولیه را بگذرانید. هلال احمر دوره‌های رایگان ارائه می‌دهد.",
-      priority: "high",
+      priority: "medium",
       checked: false,
     });
   }
@@ -459,7 +480,7 @@ export function generateActions(profile: UserProfile): ActionItem[] {
     id: "a7",
     phase: "before",
     title: "بیمه اموال و زندگی",
-    description: "بیمه زلزله و آتش‌سوزی برای منزل خود تهیه کنید.",
+    description: "بیمه اموال با پوشش خسارات ناشی از جنگ، انفجار و آتش‌سوزی را برای منزل خود تهیه کنید.",
     priority: "medium",
     checked: false,
   });
@@ -471,7 +492,7 @@ export function generateActions(profile: UserProfile): ActionItem[] {
       title: "مشورت با پزشک برای برنامه اضطراری",
       description:
         "با پزشک خود برنامه‌ای برای مدیریت بیماری در شرایط بحران تنظیم کنید.",
-      priority: "high",
+      priority: "low",
       checked: false,
     });
   }
@@ -491,7 +512,7 @@ export function generateActions(profile: UserProfile): ActionItem[] {
     phase: "during",
     title: "قطع گاز، برق و آب",
     description:
-      "بلافاصله شیر گاز، کلید اصلی برق و آب را قطع کنید تا از حوادث ثانوی جلوگیری شود.",
+      "بلافاصله شیر گاز، کلید اصلی برق و آب را قطع کنید تا از حوادث ثانویه جلوگیری شود.",
     priority: "high",
     checked: false,
   });
@@ -505,6 +526,18 @@ export function generateActions(profile: UserProfile): ActionItem[] {
     priority: "high",
     checked: false,
   });
+
+  if (profile.livingType === "apartment") {
+    actions.push({
+      id: "d6",
+      phase: "during",
+      title: "تخلیه ساختمان از پله",
+      description:
+        "در صورت دستور تخلیه، فقط با استفاده از راه‌پله از ساختمان خارج شوید و هرگز از آسانسور استفاده نکنید.",
+      priority: "high",
+      checked: false,
+    });
+  }
 
   actions.push({
     id: "d4",
@@ -521,21 +554,10 @@ export function generateActions(profile: UserProfile): ActionItem[] {
     phase: "during",
     title: "استفاده از رادیو برای اطلاعات",
     description: "رادیو را روشن کنید و دستورالعمل‌های رسمی را دنبال کنید.",
-    priority: "medium",
+    priority: "low",
     checked: false,
   });
 
-  if (profile.livingType === "apartment") {
-    actions.push({
-      id: "d6",
-      phase: "during",
-      title: "تخلیه ساختمان از پله (نه آسانسور)",
-      description:
-        "در صورت دستور تخلیه، فقط از راه‌پله استفاده کنید. آسانسور را هرگز استفاده نکنید.",
-      priority: "high",
-      checked: false,
-    });
-  }
 
   // After crisis
   actions.push({
@@ -562,7 +584,7 @@ export function generateActions(profile: UserProfile): ActionItem[] {
     id: "after3",
     phase: "after",
     title: "ثبت خسارات",
-    description: "از خرابی‌ها عکس بگیرید برای اعلام به بیمه.",
+    description: "از خرابی‌ها برای اعلام به بیمه عکس بگیرید.",
     priority: "medium",
     checked: false,
   });
@@ -570,7 +592,7 @@ export function generateActions(profile: UserProfile): ActionItem[] {
   actions.push({
     id: "after4",
     phase: "after",
-    title: "بازپرسازی کیف اضطراری",
+    title: "آماده‌سازی مجدد کیف اضطراری",
     description: "پس از پایان بحران، کیف اضطراری را دوباره تجهیز کنید.",
     priority: "medium",
     checked: false,
