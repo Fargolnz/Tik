@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "motion/react";
-import { X, FileText, FileSpreadsheet } from "lucide-react";
+import { X, FileText, FileSpreadsheet, Globe } from "lucide-react";
 import { ChecklistItem, ActionItem, UserProfile } from "./data";
 
 interface DownloadModalProps {
@@ -224,7 +224,7 @@ export function DownloadModal({ isOpen, onClose, items, actions, profile, mode }
                   action: downloadJson,
                 },
                 {
-                  icon: <span style={{ fontSize: "1.4rem" }}>🌐</span>,
+                  icon: <Globe size={22} color="#2980B9" />,
                   title: "فایل HTML (قابل چاپ)",
                   desc: "با قالب‌بندی زیبا برای چاپ",
                   action: downloadHtml,
