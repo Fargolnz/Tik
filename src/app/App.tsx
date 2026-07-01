@@ -94,7 +94,7 @@ export default function App() {
               id: a.action_id,
               phase: a.phase as "before" | "during" | "after",
               title: a.title,
-              description: a.description,
+              description: a.description ?? "",
               priority: a.priority as "high" | "medium" | "low",
               checked: Boolean(a.checked),
             }))
@@ -157,7 +157,7 @@ export default function App() {
             id: a.action_id,
             phase: a.phase as "before" | "during" | "after",
             title: a.title,
-            description: a.description,
+            description: a.description ?? "",
             priority: a.priority as "high" | "medium" | "low",
             checked: Boolean(a.checked),
           }))

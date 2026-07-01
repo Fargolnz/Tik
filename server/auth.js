@@ -45,7 +45,7 @@ router.post("/register", (req, res) => {
 
     const existing = db.prepare("SELECT id FROM users WHERE phone = ?").get(phone);
     if (existing) {
-      return res.status(409).json({ error: "این شماره تلفن قبلاً ثبت‌نام کرده است" });
+      return res.status(409).json({ error: "این شماره تلفن قبلا ثبت‌نام کرده است" });
     }
 
     const hash = bcrypt.hashSync(password, 10);
@@ -85,9 +85,16 @@ router.post("/login", (req, res) => {
 
 router.post("/send-otp", (req, res) => {
   try {
-    const { phone } = req.body;
+    const { phone, register } = req.body;
     if (!phone) {
       return res.status(400).json({ error: "Phone is required" });
+    }
+
+    if (register) {
+      const existing = db.prepare("SELECT id FROM users WHERE phone = ?").get(phone);
+      if (existing) {
+        return res.status(409).json({ error: "این شماره تلفن قبلا ثبت‌نام کرده است" });
+      }
     }
 
     const code = generateOtpCode();

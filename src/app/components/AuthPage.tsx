@@ -25,9 +25,12 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
   // Register state
   const [regName, setRegName] = useState("");
   const [regPhone, setRegPhone] = useState("");
-  const [regPhoneConfirm, setRegPhoneConfirm] = useState("");
   const [regPassword, setRegPassword] = useState("");
   const [regPasswordConfirm, setRegPasswordConfirm] = useState("");
+  const [regOtpCode, setRegOtpCode] = useState("");
+  const [regOtpVerified, setRegOtpVerified] = useState(false);
+  const [regStep, setRegStep] = useState<"form" | "otp" | "password">("form");
+  const [regOtpLoading, setRegOtpLoading] = useState(false);
 
   // Forgot password state
   const [forgotPhone, setForgotPhone] = useState("");
@@ -48,7 +51,7 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
   const handleLogin = async () => {
     clearMessages();
     if (!loginPhone) {
-      setError("لطفاً شماره تلفن را وارد کنید");
+      setError("لطفا شماره تلفن را وارد کنید");
       return;
     }
     setLoading(true);
@@ -66,7 +69,7 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
   const handleSendOtp = async () => {
     clearMessages();
     if (!loginPhone) {
-      setError("لطفاً شماره تلفن را وارد کنید");
+      setError("لطفا شماره تلفن را وارد کنید");
       return;
     }
     setOtpLoading(true);
@@ -84,7 +87,7 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
   const handleVerifyOtp = async () => {
     clearMessages();
     if (!otpCode) {
-      setError("لطفاً کد تأیید را وارد کنید");
+      setError("لطفا کد تأیید را وارد کنید");
       return;
     }
     setLoading(true);
@@ -99,14 +102,51 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
     }
   };
 
-  const handleRegister = async () => {
+  const handleRegSendOtp = async () => {
     clearMessages();
-    if (!regName || !regPhone || !regPhoneConfirm || !regPassword || !regPasswordConfirm) {
-      setError("لطفاً تمام فیلدها را پر کنید");
+    if (!regName) {
+      setError("لطفا نام و نام خانوادگی را وارد کنید");
       return;
     }
-    if (regPhone !== regPhoneConfirm) {
-      setError("شماره تلفن با تأیید آن مطابقت ندارد");
+    if (!regPhone) {
+      setError("لطفا شماره تلفن را وارد کنید");
+      return;
+    }
+    setRegOtpLoading(true);
+    try {
+      await api.auth.sendOtp({ phone: regPhone, register: true });
+      setRegStep("otp");
+      setSuccess("کد تأیید ارسال شد");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "خطا در ارسال کد");
+    } finally {
+      setRegOtpLoading(false);
+    }
+  };
+
+  const handleRegVerifyOtp = async () => {
+    clearMessages();
+    if (!regOtpCode) {
+      setError("لطفا کد تأیید را وارد کنید");
+      return;
+    }
+    setLoading(true);
+    try {
+      await api.auth.verifyOtp({ phone: regPhone, code: regOtpCode });
+      setRegOtpVerified(true);
+      setRegStep("password");
+      setSuccess("شماره تلفن تأیید شد");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "کد نامعتبر است");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRegister = async () => {
+    clearMessages();
+    if (!regPassword || !regPasswordConfirm) {
+      setError("لطفا رمز عبور را وارد کنید");
       return;
     }
     if (regPassword !== regPasswordConfirm) {
@@ -136,7 +176,7 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
   const handleForgotSendCode = async () => {
     clearMessages();
     if (!forgotPhone) {
-      setError("لطفاً شماره تلفن را وارد کنید");
+      setError("لطفا شماره تلفن را وارد کنید");
       return;
     }
     setLoading(true);
@@ -154,7 +194,7 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
   const handleForgotVerifyCode = async () => {
     clearMessages();
     if (!forgotCode) {
-      setError("لطفاً کد تأیید را وارد کنید");
+      setError("لطفا کد تأیید را وارد کنید");
       return;
     }
     setForgotStep("password");
@@ -505,197 +545,128 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
               transition={{ duration: 0.25 }}
               className="flex flex-col gap-4 mt-6"
             >
-              <div className="flex flex-col gap-3">
-                <label
-                  style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}
-                >
-                  نام و نام خانوادگی
-                </label>
-                <div
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl"
-                  style={{ backgroundColor: "var(--input-background)" }}
-                >
-                  <User size={18} color="var(--muted-foreground)" />
-                  <input
-                    type="text"
-                    placeholder="مثال: علی محمدی"
-                    value={regName}
-                    onChange={(e) => setRegName(e.target.value)}
-                    className="flex-1 bg-transparent outline-none"
-                    style={{
-                      color: "var(--foreground)",
-                      fontSize: "0.9rem",
-                      fontFamily: "'Vazirmatn', sans-serif",
-                    }}
-                  />
-                </div>
-              </div>
+              {regStep === "form" && (
+                <>
+                  <div className="flex flex-col gap-3">
+                    <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}>
+                      نام و نام خانوادگی
+                    </label>
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ backgroundColor: "var(--input-background)" }}>
+                      <User size={18} color="var(--muted-foreground)" />
+                      <input type="text" placeholder="مثال: فرگل" value={regName} onChange={(e) => setRegName(e.target.value)} className="flex-1 bg-transparent outline-none" style={{ color: "var(--foreground)", fontSize: "0.9rem", fontFamily: "'Vazirmatn', sans-serif" }} />
+                    </div>
+                  </div>
 
-              <div className="flex flex-col gap-3">
-                <label
-                  style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}
-                >
-                  شماره تلفن
-                </label>
-                <div
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl"
-                  style={{ backgroundColor: "var(--input-background)" }}
-                >
-                  <Phone size={18} color="var(--muted-foreground)" />
-                  <input
-                    type="tel"
-                    dir="ltr"
-                    placeholder="09123456789"
-                    value={regPhone}
-                    onChange={(e) => setRegPhone(e.target.value)}
-                    className="flex-1 bg-transparent outline-none"
-                    style={{
-                      color: "var(--foreground)",
-                      fontSize: "0.9rem",
-                      fontFamily: "'Vazirmatn', sans-serif",
-                    }}
-                  />
-                </div>
-              </div>
+                  <div className="flex flex-col gap-3">
+                    <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}>
+                      شماره تلفن
+                    </label>
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ backgroundColor: "var(--input-background)" }}>
+                      <Phone size={18} color="var(--muted-foreground)" />
+                      <input type="tel" dir="ltr" placeholder="09123456789" value={regPhone} onChange={(e) => setRegPhone(e.target.value)} className="flex-1 bg-transparent outline-none" style={{ color: "var(--foreground)", fontSize: "0.9rem", fontFamily: "'Vazirmatn', sans-serif" }} />
+                    </div>
+                  </div>
 
-              <div className="flex flex-col gap-3">
-                <label
-                  style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}
-                >
-                  تأیید شماره تلفن
-                </label>
-                <div
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl"
-                  style={{ backgroundColor: "var(--input-background)" }}
-                >
-                  <Phone size={18} color="var(--muted-foreground)" />
-                  <input
-                    type="tel"
-                    dir="ltr"
-                    placeholder="09123456789"
-                    value={regPhoneConfirm}
-                    onChange={(e) => setRegPhoneConfirm(e.target.value)}
-                    className="flex-1 bg-transparent outline-none"
-                    style={{
-                      color: "var(--foreground)",
-                      fontSize: "0.9rem",
-                      fontFamily: "'Vazirmatn', sans-serif",
-                    }}
-                  />
-                </div>
-              </div>
+                  {error && (
+                    <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="p-3 rounded-xl text-sm" style={{ backgroundColor: "#FDEDEC", color: "#C0392B", border: "1px solid #F5C6CB" }}>
+                      {error}
+                    </motion.div>
+                  )}
 
-              <div className="flex flex-col gap-3">
-                <label
-                  style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}
-                >
-                  رمز عبور
-                </label>
-                <div
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl"
-                  style={{ backgroundColor: "var(--input-background)" }}
-                >
-                  <Lock size={18} color="var(--muted-foreground)" />
-                  <input
-                    type="password"
-                    dir="ltr"
-                    placeholder="حداقل ۴ کاراکتر"
-                    value={regPassword}
-                    onChange={(e) => setRegPassword(e.target.value)}
-                    className="flex-1 bg-transparent outline-none"
-                    style={{
-                      color: "var(--foreground)",
-                      fontSize: "0.9rem",
-                      fontFamily: "'Vazirmatn', sans-serif",
-                    }}
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-3">
-                <label
-                  style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}
-                >
-                  تأیید رمز عبور
-                </label>
-                <div
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl"
-                  style={{ backgroundColor: "var(--input-background)" }}
-                >
-                  <Lock size={18} color="var(--muted-foreground)" />
-                  <input
-                    type="password"
-                    dir="ltr"
-                    placeholder="••••••"
-                    value={regPasswordConfirm}
-                    onChange={(e) => setRegPasswordConfirm(e.target.value)}
-                    className="flex-1 bg-transparent outline-none"
-                    style={{
-                      color: "var(--foreground)",
-                      fontSize: "0.9rem",
-                      fontFamily: "'Vazirmatn', sans-serif",
-                    }}
-                  />
-                </div>
-              </div>
-
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="p-3 rounded-xl text-sm"
-                  style={{
-                    backgroundColor: "#FDEDEC",
-                    color: "#C0392B",
-                    border: "1px solid #F5C6CB",
-                  }}
-                >
-                  {error}
-                </motion.div>
+                  <button onClick={handleRegSendOtp} disabled={regOtpLoading} className="w-full py-4 rounded-2xl text-white transition-all active:scale-95 disabled:opacity-50" style={{ backgroundColor: "var(--primary)", fontSize: "1rem", fontWeight: 600, fontFamily: "'Vazirmatn', sans-serif" }}>
+                    {regOtpLoading ? "..." : "ارسال کد تأیید"}
+                  </button>
+                </>
               )}
 
-              <button
-                onClick={handleRegister}
-                disabled={loading}
-                className="w-full py-4 rounded-2xl text-white transition-all active:scale-95 disabled:opacity-50"
-                style={{
-                  backgroundColor: "#27AE60",
-                  fontSize: "1rem",
-                  fontWeight: 600,
-                  fontFamily: "'Vazirmatn', sans-serif",
-                }}
-              >
-                {loading ? "..." : "ثبت‌نام"}
-              </button>
+              {regStep === "otp" && (
+                <>
+                  <button onClick={() => { setRegStep("form"); setRegOtpCode(""); clearMessages(); }} style={{ fontSize: "0.85rem", color: "var(--muted-foreground)", background: "none", border: "none", cursor: "pointer", textAlign: "right", padding: "4px 0", display: "flex", alignItems: "center", gap: "4px" }}>
+                    <ArrowLeft size={16} /> تغییر شماره تلفن
+                  </button>
+
+                  <div className="flex flex-col gap-3">
+                    <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}>
+                      کد تأیید
+                    </label>
+                    <p style={{ fontSize: "0.78rem", color: "var(--muted-foreground)" }}>
+                      کد ۶ رقمی به شماره {regPhone} ارسال شد
+                    </p>
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ backgroundColor: "var(--input-background)" }}>
+                      <Lock size={18} color="var(--muted-foreground)" />
+                      <input type="text" dir="ltr" placeholder="000000" value={regOtpCode} onChange={(e) => setRegOtpCode(e.target.value)} maxLength={6} className="flex-1 bg-transparent outline-none" style={{ color: "var(--foreground)", fontSize: "0.9rem", fontFamily: "'Vazirmatn', sans-serif", letterSpacing: "0.5em" }} />
+                    </div>
+                  </div>
+
+                  {success && (
+                    <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="p-3 rounded-xl text-sm" style={{ backgroundColor: "#EAFAF1", color: "#27AE60", border: "1px solid #A3E4D7" }}>
+                      {success}
+                    </motion.div>
+                  )}
+
+                  {error && (
+                    <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="p-3 rounded-xl text-sm" style={{ backgroundColor: "#FDEDEC", color: "#C0392B", border: "1px solid #F5C6CB" }}>
+                      {error}
+                    </motion.div>
+                  )}
+
+                  <button onClick={handleRegVerifyOtp} disabled={loading} className="w-full py-4 rounded-2xl text-white transition-all active:scale-95 disabled:opacity-50" style={{ backgroundColor: "var(--primary)", fontSize: "1rem", fontWeight: 600, fontFamily: "'Vazirmatn', sans-serif" }}>
+                    {loading ? "..." : "تأیید کد"}
+                  </button>
+
+                  <button onClick={handleRegSendOtp} disabled={regOtpLoading} style={{ fontSize: "0.8rem", color: "var(--primary)", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}>
+                    ارسال مجدد کد
+                  </button>
+                </>
+              )}
+
+              {regStep === "password" && (
+                <>
+                  {success && (
+                    <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="p-3 rounded-xl text-sm" style={{ backgroundColor: "#EAFAF1", color: "#27AE60", border: "1px solid #A3E4D7" }}>
+                      ✓ {success}
+                    </motion.div>
+                  )}
+
+                  <div className="flex flex-col gap-3">
+                    <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}>
+                      رمز عبور
+                    </label>
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ backgroundColor: "var(--input-background)" }}>
+                      <Lock size={18} color="var(--muted-foreground)" />
+                      <input type="password" dir="ltr" placeholder="حداقل ۴ کاراکتر" value={regPassword} onChange={(e) => setRegPassword(e.target.value)} className="flex-1 bg-transparent outline-none" style={{ color: "var(--foreground)", fontSize: "0.9rem", fontFamily: "'Vazirmatn', sans-serif" }} />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-3">
+                    <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}>
+                      تأیید رمز عبور
+                    </label>
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ backgroundColor: "var(--input-background)" }}>
+                      <Lock size={18} color="var(--muted-foreground)" />
+                      <input type="password" dir="ltr" placeholder="••••••" value={regPasswordConfirm} onChange={(e) => setRegPasswordConfirm(e.target.value)} className="flex-1 bg-transparent outline-none" style={{ color: "var(--foreground)", fontSize: "0.9rem", fontFamily: "'Vazirmatn', sans-serif" }} />
+                    </div>
+                  </div>
+
+                  {error && (
+                    <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="p-3 rounded-xl text-sm" style={{ backgroundColor: "#FDEDEC", color: "#C0392B", border: "1px solid #F5C6CB" }}>
+                      {error}
+                    </motion.div>
+                  )}
+
+                  <button onClick={handleRegister} disabled={loading} className="w-full py-4 rounded-2xl text-white transition-all active:scale-95 disabled:opacity-50" style={{ backgroundColor: "var(--primary)", fontSize: "1rem", fontWeight: 600, fontFamily: "'Vazirmatn', sans-serif" }}>
+                    {loading ? "..." : "ثبت‌نام"}
+                  </button>
+                </>
+              )}
 
               <div className="flex items-center gap-3 my-1">
-                <div
-                  className="flex-1 h-px"
-                  style={{ backgroundColor: "var(--border)" }}
-                />
-                <span
-                  style={{ fontSize: "0.8rem", color: "var(--muted-foreground)" }}
-                >
-                  یا
-                </span>
-                <div
-                  className="flex-1 h-px"
-                  style={{ backgroundColor: "var(--border)" }}
-                />
+                <div className="flex-1 h-px" style={{ backgroundColor: "var(--border)" }} />
+                <span style={{ fontSize: "0.8rem", color: "var(--muted-foreground)" }}>یا</span>
+                <div className="flex-1 h-px" style={{ backgroundColor: "var(--border)" }} />
               </div>
 
-              <button
-                onClick={switchToLogin}
-                className="w-full py-3.5 rounded-2xl transition-all active:scale-95"
-                style={{
-                  backgroundColor: "var(--card)",
-                  border: "2px solid var(--border)",
-                  color: "var(--foreground)",
-                  fontSize: "0.9rem",
-                  fontWeight: 600,
-                  fontFamily: "'Vazirmatn', sans-serif",
-                }}
-              >
+              <button onClick={switchToLogin} className="w-full py-3.5 rounded-2xl transition-all active:scale-95" style={{ backgroundColor: "var(--card)", border: "2px solid var(--border)", color: "var(--foreground)", fontSize: "0.9rem", fontWeight: 600, fontFamily: "'Vazirmatn', sans-serif" }}>
                 حساب دارید؟ ورود
               </button>
             </motion.div>

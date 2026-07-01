@@ -92,7 +92,7 @@ export const api = {
         body: JSON.stringify(data),
       }),
 
-    sendOtp: (data: { phone: string }) =>
+    sendOtp: (data: { phone: string; register?: boolean }) =>
       request<{ message: string; code_debug: string }>("/auth/send-otp", {
         method: "POST",
         body: JSON.stringify(data),
