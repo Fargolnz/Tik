@@ -334,7 +334,6 @@ export default function App() {
   };
 
   const navTabs = [
-    { key: "home" as Tab, icon: <Home size={20} />, label: "خانه" },
     {
       key: "checklist" as Tab,
       icon: <ClipboardList size={20} />,
@@ -347,6 +346,7 @@ export default function App() {
       label: "اقدامات",
       badge: actions.filter((a) => !a.checked).length,
     },
+    { key: "home" as Tab, icon: <Home size={26} />, label: "خانه", isHome: true },
     { key: "profile" as Tab, icon: <User size={20} />, label: "پروفایل" },
     { key: "toolkit" as Tab, icon: <Wrench size={20} />, label: "ابزارها" },
   ];
@@ -603,11 +603,11 @@ export default function App() {
 
               {/* Bottom navigation - 5 tabs */}
               <div
-                className="flex items-center px-2 py-2 gap-1"
+                className="flex items-center justify-center px-1 py-1"
                 style={{
                   backgroundColor: "var(--card)",
                   borderTop: "1px solid var(--border)",
-                  paddingBottom: "max(4px, env(safe-area-inset-bottom))",
+                  paddingBottom: "max(2px, env(safe-area-inset-bottom))",
                 }}
                 dir="rtl"
               >
@@ -619,6 +619,7 @@ export default function App() {
                     icon={tab.icon}
                     label={tab.label}
                     badge={tab.badge}
+                    isHome={tab.isHome}
                   />
                 ))}
               </div>
@@ -648,30 +649,69 @@ function NavTab({
   icon,
   label,
   badge,
+  isHome,
 }: {
   active: boolean;
   onClick: () => void;
   icon: React.ReactNode;
   label: string;
   badge?: number;
+  isHome?: boolean;
 }) {
+  if (isHome) {
+    return (
+      <button
+        onClick={onClick}
+        className="relative flex-shrink-0 flex flex-col items-center justify-center transition-all active:scale-90"
+        style={{
+          width: 60,
+          height: 60,
+          borderRadius: "1.25rem",
+          backgroundColor: "var(--primary)",
+          color: "white",
+          boxShadow: "0 4px 20px rgba(192,57,43,0.35)",
+          fontFamily: "'Vazirmatn', sans-serif",
+          transform: "translateY(-8px)",
+        }}
+      >
+        {icon}
+        <span
+          style={{
+            fontSize: "0.58rem",
+            fontWeight: 700,
+            marginTop: 2,
+          }}
+        >
+          {label}
+        </span>
+      </button>
+    );
+  }
+
   return (
     <button
       onClick={onClick}
       className="flex-1 flex flex-col items-center gap-0.5 py-2 rounded-xl transition-all active:scale-95 relative"
       style={{
-        backgroundColor: active ? "var(--primary)" : "transparent",
-        color: active ? "white" : "var(--muted-foreground)",
-        fontFamily: "'Vazirmatn', sans-serif",
+        color: "var(--muted-foreground)",
+          fontFamily: "'Vazirmatn', sans-serif",
       }}
     >
       {icon}
-      <span style={{ fontSize: "0.62rem", fontWeight: active ? 700 : 700 }}>{label}</span>
+      <span style={{ fontSize: "0.62rem", fontWeight: 700, marginTop: 1 }}>{label}</span>
+      {active && (
+        <motion.div
+          layoutId="activeTab"
+          className="absolute bottom-0 w-5 h-1 rounded-full"
+          style={{ backgroundColor: "var(--primary)" }}
+          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+        />
+      )}
       {badge !== undefined && badge > 0 && (
         <span
           className="absolute top-0.5 left-1/2 w-4 h-4 rounded-full flex items-center justify-center"
           style={{
-            backgroundColor: active ? "rgba(255,255,255,0.3)" : "var(--primary)",
+            backgroundColor: "var(--primary)",
             color: "white",
             fontSize: "0.55rem",
             fontWeight: 700,
