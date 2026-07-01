@@ -10,9 +10,8 @@ import {
   Home,
   LogOut,
   RefreshCw,
+  Settings,
   Edit3,
-  Check,
-  X,
   ChevronLeft,
 } from "lucide-react";
 import { UserData } from "../api";
@@ -25,6 +24,7 @@ interface ProfileTabProps {
   onRegenerate: () => void;
   onUpdateUser: (fullName: string) => void;
   onNavigateToQuestionnaire: () => void;
+  onOpenSettings: () => void;
 }
 
 export function ProfileTab({
@@ -34,25 +34,9 @@ export function ProfileTab({
   onRegenerate,
   onUpdateUser,
   onNavigateToQuestionnaire,
+  onOpenSettings,
 }: ProfileTabProps) {
-  const [editing, setEditing] = useState(false);
-  const [editName, setEditName] = useState(user.full_name);
-  const [saved, setSaved] = useState(false);
   const [showConfirmLogout, setShowConfirmLogout] = useState(false);
-
-  const handleSaveName = () => {
-    if (editName.trim() && editName !== user.full_name) {
-      onUpdateUser(editName.trim());
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
-    }
-    setEditing(false);
-  };
-
-  const handleCancelEdit = () => {
-    setEditName(user.full_name);
-    setEditing(false);
-  };
 
   const getLivingTypeLabel = (type: string) => {
     switch (type) {
@@ -97,66 +81,23 @@ export function ProfileTab({
               <User size={28} color="var(--primary)" />
             </div>
             <div className="flex-1">
-              {editing ? (
-                <div className="flex flex-col gap-2">
-                  <input
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    className="p-2 rounded-lg outline-none w-full"
-                    style={{
-                      backgroundColor: "var(--input-background)",
-                      color: "var(--foreground)",
-                      fontSize: "0.9rem",
-                      fontFamily: "'Vazirmatn', sans-serif",
-                      border: "1px solid var(--border)",
-                    }}
-                    dir="rtl"
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      onClick={handleSaveName}
-                      className="px-3 py-1.5 rounded-lg text-white text-xs flex items-center gap-1"
-                      style={{ backgroundColor: "#27AE60" }}
-                    >
-                      <Check size={12} /> ذخیره
-                    </button>
-                    <button
-                      onClick={handleCancelEdit}
-                      className="px-3 py-1.5 rounded-lg text-xs flex items-center gap-1"
-                      style={{ backgroundColor: "var(--muted)", color: "var(--muted-foreground)" }}
-                    >
-                      <X size={12} /> انصراف
-                    </button>
-                  </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p style={{ fontSize: "1rem", fontWeight: 700, color: "var(--foreground)" }}>
+                    {user.full_name}
+                  </p>
+                  <p style={{ fontSize: "0.8rem", color: "var(--muted-foreground)", direction: "ltr", textAlign: "right" }}>
+                    {user.phone}
+                  </p>
                 </div>
-              ) : (
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p style={{ fontSize: "1rem", fontWeight: 700, color: "var(--foreground)" }}>
-                      {user.full_name}
-                    </p>
-                    <p style={{ fontSize: "0.8rem", color: "var(--muted-foreground)", direction: "ltr", textAlign: "right" }}>
-                      {user.phone}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setEditing(true)}
-                    className="w-9 h-9 rounded-lg flex items-center justify-center"
-                    style={{ backgroundColor: "var(--muted)" }}
-                  >
-                    <Edit3 size={15} color="var(--muted-foreground)" />
-                  </button>
-                </div>
-              )}
-              {saved && (
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  style={{ fontSize: "0.75rem", color: "#27AE60", marginTop: 4 }}
+                <button
+                  onClick={onOpenSettings}
+                  className="w-9 h-9 rounded-lg flex items-center justify-center transition-all active:scale-90"
+                  style={{ backgroundColor: "var(--muted)" }}
                 >
-                  ذخیره شد ✓
-                </motion.p>
-              )}
+                  <Settings size={15} color="var(--muted-foreground)" />
+                </button>
+              </div>
             </div>
           </div>
 
@@ -256,7 +197,7 @@ export function ProfileTab({
                   <RefreshCw size={18} color="#2980B9" />
                 </div>
                 <div className="text-right">
-                  <p style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}>
+                  <p style={{ fontSize: "0.85rem", fontWeight: 600, color: "#2980B9" }}>
                     بازتولید چک‌لیست
                   </p>
                   <p style={{ fontSize: "0.72rem", color: "var(--muted-foreground)" }}>

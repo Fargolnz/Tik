@@ -18,9 +18,10 @@ interface ToolkitTabProps {
   items: ChecklistItem[];
   actions: ActionItem[];
   profile: UserProfile | null;
+  onOpenSettings: () => void;
 }
 
-export function ToolkitTab({ items, actions, profile }: ToolkitTabProps) {
+export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitTabProps) {
   const [showExport, setShowExport] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
@@ -140,7 +141,7 @@ export function ToolkitTab({ items, actions, profile }: ToolkitTabProps) {
       title: "تنظیمات",
       desc: "مدیریت حساب کاربری",
       bg: "var(--muted)",
-      onClick: () => {},
+      onClick: onOpenSettings,
     },
     {
       icon: <Info size={20} color="#27AE60" />,
