@@ -123,10 +123,17 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
 
   const toolItems = [
     {
-      icon: <Download size={20} color="#C0392B" />,
+      icon: <Settings size={20} color="#7A7A8C" />,
+      title: "تنظیمات",
+      desc: "مدیریت حساب کاربری",
+      bg: "#7A7A8C20",
+      onClick: onOpenSettings,
+    },
+    {
+      icon: <Download size={20} color="#E91E63" />,
       title: "دانلودها",
       desc: "خروجی گرفتن از چک‌لیست و اقدامات",
-      bg: "#FDEDEC",
+      bg: "#FCE4EC",
       onClick: () => setShowExport(true),
     },
     {
@@ -137,25 +144,18 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
       onClick: () => setShowGuide(true),
     },
     {
-      icon: <Settings size={20} color="#7A7A8C" />,
-      title: "تنظیمات",
-      desc: "مدیریت حساب کاربری",
-      bg: "var(--muted)",
-      onClick: onOpenSettings,
-    },
-    {
-      icon: <Info size={20} color="#27AE60" />,
-      title: "درباره تیک",
-      desc: "نسخه ۲.۰.۰",
-      bg: "#EAFAF1",
-      onClick: () => setShowAbout(true),
-    },
-    {
       icon: <Mail size={20} color="#8E44AD" />,
       title: "ارتباط با ما",
       desc: "پیشنهادات و انتقادات",
       bg: "#F4ECF7",
       onClick: () => setShowContact(true),
+    },
+    {
+      icon: <Info size={20} color="#C0392B" />,
+      title: "درباره تیک",
+      desc: "نسخه ۲.۰.۰",
+      bg: "#FDEDEC",
+      onClick: () => setShowAbout(true),
     },
     {
       icon: <Shield size={20} color="#E67E22" />,
