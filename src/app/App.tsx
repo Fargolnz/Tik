@@ -519,7 +519,7 @@ export default function App() {
                       exit={{ opacity: 0, x: -30 }}
                       transition={{ duration: 0.2 }}
                     >
-                      {profile ? (
+                      {profile && checklist.length > 0 ? (
                         <ChecklistView
                           items={checklist}
                           onUpdate={handleChecklistUpdate}
@@ -528,9 +528,9 @@ export default function App() {
                       ) : (
                         <EmptyState
                           title="چک‌لیست آماده نشده"
-                          desc="ابتدا پرسشنامه خانواده را تکمیل کنید"
+                          desc="ابتدا پرسشنامه خانواده را تکمیل کنید تا چک‌لیست آماده شود"
                           onAction={() => setScreen("questionnaire")}
-                          actionLabel="رفتن به پرسشنامه"
+                          actionLabel="پر کردن پرسشنامه"
                         />
                       )}
                     </motion.div>
@@ -545,7 +545,7 @@ export default function App() {
                       exit={{ opacity: 0, x: -30 }}
                       transition={{ duration: 0.2 }}
                     >
-                      {profile ? (
+                      {profile && actions.length > 0 ? (
                         <ActionsView
                           actions={actions}
                           onUpdate={handleActionsUpdate}
@@ -554,9 +554,9 @@ export default function App() {
                       ) : (
                         <EmptyState
                           title="اقدامات آماده نشده"
-                          desc="ابتدا پرسشنامه خانواده را تکمیل کنید"
+                          desc="ابتدا پرسشنامه خانواده را تکمیل کنید تا اقدامات لازم مشخص شود"
                           onAction={() => setScreen("questionnaire")}
-                          actionLabel="رفتن به پرسشنامه"
+                          actionLabel="پر کردن پرسشنامه"
                         />
                       )}
                     </motion.div>
