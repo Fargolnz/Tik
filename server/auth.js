@@ -179,6 +179,27 @@ router.get("/me", authMiddleware, (req, res) => {
   }
 });
 
+router.put("/change-password", authMiddleware, (req, res) => {
+  try {
+    const { current_password, new_password } = req.body;
+    if (!current_password || !new_password) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+    if (new_password.length < 4) {
+      return res.status(400).json({ error: "Password must be at least 4 characters" });
+    }
+    const user = db.prepare("SELECT * FROM users WHERE id = ?").get(req.user.id);
+    if (!bcrypt.compareSync(current_password, user.password_hash)) {
+      return res.status(401).json({ error: "رمز عبور فعلی اشتباه است" });
+    }
+    const hash = bcrypt.hashSync(new_password, 10);
+    db.prepare("UPDATE users SET password_hash = ? WHERE id = ?").run(hash, req.user.id);
+    res.json({ message: "رمز عبور با موفقیت تغییر کرد" });
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 router.put("/profile", authMiddleware, (req, res) => {
   try {
     const { full_name } = req.body;

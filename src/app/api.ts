@@ -124,6 +124,12 @@ export const api = {
         method: "PUT",
         body: JSON.stringify(data),
       }),
+
+    changePassword: (data: { current_password: string; new_password: string }) =>
+      request<{ message: string }>("/auth/change-password", {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }),
   },
 
   profile: {

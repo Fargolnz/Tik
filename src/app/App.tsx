@@ -20,6 +20,7 @@ import { ActionsView } from "./components/ActionsView";
 import { HomeTab } from "./components/HomeTab";
 import { ProfileTab } from "./components/ProfileTab";
 import { ToolkitTab } from "./components/ToolkitTab";
+import { SettingsModal } from "./components/SettingsModal";
 import {
   UserProfile,
   ChecklistItem,
@@ -43,6 +44,7 @@ export default function App() {
   const [loadingData, setLoadingData] = useState(true);
   const [user, setUser] = useState<UserData | null>(null);
   const [showDownload, setShowDownload] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const initialized = useRef(false);
 
   useEffect(() => {
@@ -529,6 +531,7 @@ export default function App() {
                         onRegenerate={handleRegenerate}
                         onUpdateUser={handleUpdateUser}
                         onNavigateToQuestionnaire={() => setScreen("questionnaire")}
+                        onOpenSettings={() => setShowSettings(true)}
                       />
                     </motion.div>
                   )}
@@ -546,6 +549,7 @@ export default function App() {
                         items={checklist}
                         actions={actions}
                         profile={profile}
+                        onOpenSettings={() => setShowSettings(true)}
                       />
                     </motion.div>
                   )}
@@ -593,18 +597,28 @@ export default function App() {
           </motion.div>
         )}
 
-        {/* Download modal for checklist/actions */}
-        {profile && (
-          <DownloadModal
-            isOpen={showDownload}
-            onClose={() => setShowDownload(false)}
-            items={checklist}
-            actions={actions}
-            profile={profile}
-            mode={activeTab === "checklist" ? "checklist" : "actions"}
-          />
-        )}
       </div>
+
+      {/* Modals - rendered outside overflow-hidden container */}
+      {profile && (
+        <DownloadModal
+          isOpen={showDownload}
+          onClose={() => setShowDownload(false)}
+          items={checklist}
+          actions={actions}
+          profile={profile}
+          mode={activeTab === "checklist" ? "checklist" : "actions"}
+        />
+      )}
+
+      {user && (
+        <SettingsModal
+          isOpen={showSettings}
+          onClose={() => setShowSettings(false)}
+          user={user}
+          onUpdateUser={handleUpdateUser}
+        />
+      )}
     </div>
   );
 }
