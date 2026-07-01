@@ -200,6 +200,19 @@ router.put("/change-password", authMiddleware, (req, res) => {
   }
 });
 
+router.delete("/account", authMiddleware, (req, res) => {
+  try {
+    const user = db.prepare("SELECT phone FROM users WHERE id = ?").get(req.user.id);
+    if (user) {
+      db.prepare("DELETE FROM otp_codes WHERE phone = ?").run(user.phone);
+    }
+    db.prepare("DELETE FROM users WHERE id = ?").run(req.user.id);
+    res.json({ message: "حساب کاربری با موفقیت حذف شد" });
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 router.put("/profile", authMiddleware, (req, res) => {
   try {
     const { full_name } = req.body;

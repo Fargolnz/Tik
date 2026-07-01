@@ -617,6 +617,7 @@ export default function App() {
           onClose={() => setShowSettings(false)}
           user={user}
           onUpdateUser={handleUpdateUser}
+          onLogout={handleLogout}
         />
       )}
     </div>

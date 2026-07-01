@@ -22,7 +22,13 @@ async function request<T>(
     headers,
   });
 
-  const data = await res.json();
+  let data: any;
+  try {
+    data = await res.json();
+  } catch {
+    const text = await res.text();
+    throw new Error(`Server returned ${res.status}: ${text.slice(0, 100)}`);
+  }
 
   if (!res.ok) {
     throw new Error(data.error || "Request failed");
@@ -129,6 +135,11 @@ export const api = {
       request<{ message: string }>("/auth/change-password", {
         method: "PUT",
         body: JSON.stringify(data),
+      }),
+
+    deleteAccount: () =>
+      request<{ message: string }>("/auth/account", {
+        method: "DELETE",
       }),
   },
 

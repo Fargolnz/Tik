@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Eye, EyeOff, Check, User } from "lucide-react";
+import { X, Eye, EyeOff, Check, User, AlertTriangle } from "lucide-react";
 import { UserData, api } from "../api";
 
 interface SettingsModalProps {
@@ -8,9 +8,10 @@ interface SettingsModalProps {
   onClose: () => void;
   user: UserData;
   onUpdateUser: (fullName: string) => void;
+  onLogout: () => void;
 }
 
-export function SettingsModal({ isOpen, onClose, user, onUpdateUser }: SettingsModalProps) {
+export function SettingsModal({ isOpen, onClose, user, onUpdateUser, onLogout }: SettingsModalProps) {
   const [name, setName] = useState(user.full_name);
   const [savingName, setSavingName] = useState(false);
   const [nameSaved, setNameSaved] = useState(false);
@@ -26,6 +27,10 @@ export function SettingsModal({ isOpen, onClose, user, onUpdateUser }: SettingsM
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   if (!isOpen) return null;
 
@@ -78,6 +83,19 @@ export function SettingsModal({ isOpen, onClose, user, onUpdateUser }: SettingsM
       setPasswordError(e.message || "خطا در تغییر رمز عبور");
     } finally {
       setSavingPassword(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    setDeleteError("");
+    try {
+      await api.auth.deleteAccount();
+      onClose();
+      onLogout();
+    } catch (e: any) {
+      setDeleteError(e.message || "خطا در حذف حساب");
+      setDeleting(false);
     }
   };
 
@@ -282,6 +300,72 @@ export function SettingsModal({ isOpen, onClose, user, onUpdateUser }: SettingsM
                     "تغییر رمز عبور"
                   )}
                 </button>
+              </div>
+
+              <div style={{ height: 1, backgroundColor: "var(--border)", marginTop: 6, marginBottom: 16 }} />
+
+              {/* Delete Account */}
+              <div>
+                <p style={{ fontSize: "0.85rem", fontWeight: 600, color: "#C0392B", marginBottom: 8 }}>
+                  حذف حساب
+                </p>
+                {!showDeleteConfirm ? (
+                  <button
+                    onClick={() => setShowDeleteConfirm(true)}
+                    className="w-full py-2.5 rounded-xl text-white transition-all active:scale-95 flex items-center justify-center gap-2"
+                    style={{
+                      backgroundColor: "#C0392B",
+                      fontSize: "0.85rem",
+                      fontWeight: 600,
+                      fontFamily: "'Vazirmatn', sans-serif",
+                    }}
+                  >
+                    <AlertTriangle size={16} />
+                    حذف حساب کاربری
+                  </button>
+                ) : (
+                  <div
+                    className="rounded-xl p-4"
+                    style={{ backgroundColor: "#FDEDEC", border: "1px solid #C0392B" }}
+                  >
+                    <p style={{ fontSize: "0.82rem", color: "#C0392B", lineHeight: 1.7, marginBottom: 12 }}>
+                      آیا مطمئن هستید؟ تمام اطلاعات شما شامل پروفایل، چک‌لیست و اقدامات برای همیشه حذف خواهد شد.
+                    </p>
+                    {deleteError && (
+                      <p style={{ fontSize: "0.75rem", color: "#C0392B", marginBottom: 8 }}>{deleteError}</p>
+                    )}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleDeleteAccount}
+                        disabled={deleting}
+                        className="flex-1 py-2.5 rounded-xl text-white transition-all active:scale-95 flex items-center justify-center gap-2"
+                        style={{
+                          backgroundColor: "#C0392B",
+                          fontSize: "0.82rem",
+                          fontWeight: 600,
+                          fontFamily: "'Vazirmatn', sans-serif",
+                          opacity: deleting ? 0.6 : 1,
+                        }}
+                      >
+                        {deleting ? "در حال حذف..." : "تأیید حذف"}
+                      </button>
+                      <button
+                        onClick={() => { setShowDeleteConfirm(false); setDeleteError(""); }}
+                        disabled={deleting}
+                        className="flex-1 py-2.5 rounded-xl transition-all active:scale-95"
+                        style={{
+                          backgroundColor: "var(--muted)",
+                          color: "var(--foreground)",
+                          fontSize: "0.82rem",
+                          fontWeight: 600,
+                          fontFamily: "'Vazirmatn', sans-serif",
+                        }}
+                      >
+                        انصراف
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </motion.div>
           </motion.div>
