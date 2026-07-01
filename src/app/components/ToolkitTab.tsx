@@ -9,6 +9,7 @@ import {
   Info,
   Mail,
   Shield,
+  ShieldCheck,
   ChevronLeft,
   X,
 } from "lucide-react";
@@ -151,18 +152,18 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
       onClick: () => setShowContact(true),
     },
     {
-      icon: <Info size={20} color="#C0392B" />,
-      title: "درباره تیک",
-      desc: "نسخه ۲.۰.۰",
-      bg: "#FDEDEC",
-      onClick: () => setShowAbout(true),
-    },
-    {
       icon: <Shield size={20} color="#E67E22" />,
       title: "حریم خصوصی",
       desc: "سیاست حفظ اطلاعات",
       bg: "#FEF5E7",
       onClick: () => setShowPrivacy(true),
+    },
+    {
+      icon: <Info size={20} color="#C0392B" />,
+      title: "درباره تیک",
+      desc: "نسخه ۲.۰.۰",
+      bg: "#FDEDEC",
+      onClick: () => setShowAbout(true),
     },
   ];
 
