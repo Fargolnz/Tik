@@ -280,9 +280,9 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
               style={{ fontSize: "0.85rem", color: "var(--muted-foreground)" }}
             >
               {mode === "login"
-                ? "به حساب کاربری خود وارد شوید"
+                ? "وارد حساب کاربری خود شوید"
                 : mode === "register"
-                ? "یک حساب کاربری جدید بسازید"
+                ? "حساب کاربری جدید بسازید"
                 : "رمز عبور خود را بازنشانی کنید"}
             </p>
           </div>
@@ -397,7 +397,7 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
                     className="text-left self-start"
                     style={{ fontSize: "0.8rem", color: "var(--primary)" }}
                   >
-                    رمز عبور را فراموش کرده‌اید؟
+                    رمز عبور خود را فراموش کرده‌اید؟
                   </button>
                 </>
               ) : (
@@ -493,19 +493,21 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
                 </motion.div>
               )}
 
-              <button
-                onClick={loginMethod === "password" ? handleLogin : handleVerifyOtp}
-                disabled={loading || (loginMethod === "otp" && !otpSent)}
-                className="w-full py-4 rounded-2xl text-white transition-all active:scale-95 disabled:opacity-50"
-                style={{
-                  backgroundColor: "var(--primary)",
-                  fontSize: "1rem",
-                  fontWeight: 600,
-                  fontFamily: "'Vazirmatn', sans-serif",
-                }}
-              >
-                {loading ? "..." : loginMethod === "password" ? "ورود" : "تأیید کد"}
-              </button>
+              {loginMethod !== "otp" || otpSent ? (
+                <button
+                  onClick={loginMethod === "password" ? handleLogin : handleVerifyOtp}
+                  disabled={loading}
+                  className="w-full py-4 rounded-2xl text-white transition-all active:scale-95 disabled:opacity-50"
+                  style={{
+                    backgroundColor: "var(--primary)",
+                    fontSize: "1rem",
+                    fontWeight: 600,
+                    fontFamily: "'Vazirmatn', sans-serif",
+                  }}
+                >
+                  {loading ? "..." : loginMethod === "password" ? "ورود" : "تأیید کد"}
+                </button>
+              ) : null}
 
               <div className="flex items-center gap-3 my-1">
                 <div
