@@ -368,7 +368,7 @@ function Modal({
         animate={{ y: 0 }}
         exit={{ y: "100%" }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="rounded-t-3xl p-6 w-full max-w-sm"
+        className="rounded-3xl p-6 w-full max-w-sm"
         style={{
           backgroundColor: "var(--card)",
           fontFamily: "'Vazirmatn', sans-serif",

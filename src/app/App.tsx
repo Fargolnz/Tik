@@ -892,19 +892,23 @@ function DownloadModal({
             onClick={onClose}
           />
           <motion.div
-            className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl p-6"
-            style={{
-              backgroundColor: "var(--card)",
-              maxWidth: "430px",
-              margin: "0 auto",
-              fontFamily: "'Vazirmatn', sans-serif",
-            }}
-            dir="rtl"
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
+            <motion.div
+              className="w-full max-w-sm rounded-3xl p-6"
+              style={{
+                backgroundColor: "var(--card)",
+                fontFamily: "'Vazirmatn', sans-serif",
+              }}
+              dir="rtl"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            >
             <div className="flex justify-between items-center mb-5">
               <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--foreground)" }}>
                 دانلود
@@ -918,6 +922,7 @@ function DownloadModal({
               <DownloadBtn icon={<FileSpreadsheet size={22} />} title="فایل JSON" desc="برای بازگردانی و ویرایش" action={downloadJson} />
               <DownloadBtn icon={<Globe size={22} />} title="فایل HTML" desc="با قالب‌بندی زیبا برای چاپ" action={downloadHtml} />
             </div>
+          </motion.div>
           </motion.div>
         </>
       )}
