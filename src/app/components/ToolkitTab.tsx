@@ -335,12 +335,26 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
       {/* Privacy Modal */}
       {showPrivacy && (
         <Modal onClose={() => setShowPrivacy(false)} title="حریم خصوصی">
-          <div className="flex flex-col gap-3" style={{ fontSize: "0.82rem", color: "var(--muted-foreground)", lineHeight: 1.8 }}>
-            <p>اطلاعات شما در امنیت کامل ذخیره می‌شود و بدون رضایت شما در اختیار شخص ثالث قرار نخواهد گرفت.</p>
-            <p>شماره تلفن شما تنها برای احراز هویت استفاده می‌شود.</p>
-            <p>اطلاعات خانواده و چک‌لیست‌ها تنها نزد شما و سرور امن ذخیره می‌شود.</p>
-            <p>شما می‌توانید در هر زمان حساب خود را حذف کنید.</p>
-            <p style={{ fontSize: "0.75rem", marginTop: 8 }}>آخرین به‌روزرسانی: تیر ۱۴۰۵</p>
+          <div className="flex flex-col gap-3" style={{ fontSize: "0.82rem", lineHeight: 1.8 }}>
+            {[
+              "اطلاعات شما در امنیت کامل ذخیره می‌شود و بدون رضایت شما در اختیار شخص ثالث قرار نخواهد گرفت.",
+              "شماره تلفن شما تنها برای احراز هویت استفاده می‌شود.",
+              "اطلاعات خانواده و چک‌لیست‌ها تنها نزد شما و سرور امن ذخیره می‌شود.",
+              "شما می‌توانید در هر زمان حساب خود را حذف کنید.",
+            ].map((text, i) => (
+              <div key={i} className="flex items-start gap-3">
+                <div
+                  className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                  style={{ backgroundColor: "var(--muted)", color: "var(--muted-foreground)", fontSize: "0.72rem", fontWeight: 700 }}
+                >
+                  {i + 1}
+                </div>
+                <p style={{ color: "var(--muted-foreground)" }}>{text}</p>
+              </div>
+            ))}
+            <p style={{ fontSize: "0.75rem", color: "var(--muted-foreground)", textAlign: "center", marginTop: 8, paddingTop: 12, borderTop: "1px solid var(--border)" }}>
+              آخرین به‌روزرسانی: تیر ۱۴۰۵
+            </p>
           </div>
         </Modal>
       )}
