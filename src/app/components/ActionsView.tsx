@@ -50,6 +50,9 @@ export function ActionsView({ actions, onUpdate, onDownload }: ActionsViewProps)
 
   const phaseActions = actions.filter((a) => a.phase === activePhase);
   const checkedCount = phaseActions.filter((a) => a.checked).length;
+  const totalChecked = actions.filter((a) => a.checked).length;
+  const totalActions = actions.length;
+  const overallProgress = Math.round((totalChecked / totalActions) * 100);
   const config = phaseConfig[activePhase];
 
   return (
@@ -60,7 +63,7 @@ export function ActionsView({ actions, onUpdate, onDownload }: ActionsViewProps)
     >
       {/* Header */}
       <div className="px-5 pt-8 pb-5" style={{ backgroundColor: config.color }}>
-        <div className="flex justify-between items-center mb-1">
+        <div className="flex justify-between items-center mb-3">
           <h1 style={{ color: "white", fontSize: "1.25rem", fontWeight: 700 }}>
             اقدامات اضطراری
           </h1>
@@ -73,9 +76,23 @@ export function ActionsView({ actions, onUpdate, onDownload }: ActionsViewProps)
             دانلود
           </button>
         </div>
-        <p style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.82rem" }}>
-          {toPersianNumber(checkedCount)} از {toPersianNumber(phaseActions.length)} اقدام انجام شده
-        </p>
+
+        {/* Progress */}
+        <div className="mb-2 flex justify-between items-center">
+          <span style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.8rem" }}>
+            {toPersianNumber(totalChecked)} از {toPersianNumber(totalActions)} اقدام انجام شده
+          </span>
+          <span style={{ color: "white", fontSize: "0.9rem", fontWeight: 700 }}>
+            {toPersianNumber(overallProgress)}٪
+          </span>
+        </div>
+        <div className="w-full h-2 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.3)" }}>
+          <motion.div
+            className="h-full rounded-full bg-white"
+            animate={{ width: `${overallProgress}%` }}
+            transition={{ duration: 0.4 }}
+          />
+        </div>
       </div>
 
       {/* Phase tabs */}
