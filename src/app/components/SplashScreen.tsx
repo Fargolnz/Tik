@@ -81,11 +81,11 @@ export function SplashScreen({ onStart }: SplashScreenProps) {
             fontFamily: "'Vazirmatn', sans-serif",
           }}
         >
-          شروع کنید
+          ورود به سامانه
         </button>
 
         <p className="text-center text-muted-foreground" style={{ fontSize: "0.75rem" }}>
-          Tik v{toPersianNumber("1.0.0")}
+          Tik v2.0.0
         </p>
       </motion.div>
     </div>
