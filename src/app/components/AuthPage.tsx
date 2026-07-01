@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ShieldCheck, Phone, Lock, User, ArrowLeft, Mail } from "lucide-react";
+import { ShieldCheck, Phone, Lock, User, ArrowLeft, Mail, Eye, EyeOff } from "lucide-react";
 import { api, setToken } from "../api";
 
 type AuthMode = "login" | "register" | "forgot";
@@ -42,6 +42,8 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>({});
+  const togglePassword = (key: string) => setShowPasswords(p => ({ ...p, [key]: !p[key] }));
 
   const clearMessages = () => {
     setError("");
@@ -372,9 +374,11 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
                       className="flex items-center gap-3 px-4 py-3 rounded-xl"
                       style={{ backgroundColor: "var(--input-background)" }}
                     >
-                      <Lock size={18} color="var(--muted-foreground)" />
+                      <button type="button" onClick={() => togglePassword("login")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex" }}>
+                        {showPasswords["login"] ? <EyeOff size={18} color="var(--muted-foreground)" /> : <Eye size={18} color="var(--muted-foreground)" />}
+                      </button>
                       <input
-                        type="password"
+                        type={showPasswords["login"] ? "text" : "password"}
                         dir="ltr"
                         placeholder="••••••"
                         value={loginPassword}
@@ -519,6 +523,9 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
                 />
               </div>
 
+              <p style={{ fontSize: "0.78rem", color: "var(--muted-foreground)", textAlign: "center", marginBottom: "-8px" }}>
+                حساب کاربری ندارید؟
+              </p>
               <button
                 onClick={switchToRegister}
                 className="w-full py-3.5 rounded-2xl transition-all active:scale-95"
@@ -531,7 +538,7 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
                   fontFamily: "'Vazirmatn', sans-serif",
                 }}
               >
-                حساب کاربری ندارید؟ ثبت‌نام
+                ثبت‌نام
               </button>
             </motion.div>
           )}
@@ -633,8 +640,10 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
                       رمز عبور
                     </label>
                     <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ backgroundColor: "var(--input-background)" }}>
-                      <Lock size={18} color="var(--muted-foreground)" />
-                      <input type="password" dir="ltr" placeholder="حداقل ۴ کاراکتر" value={regPassword} onChange={(e) => setRegPassword(e.target.value)} className="flex-1 bg-transparent outline-none" style={{ color: "var(--foreground)", fontSize: "0.9rem", fontFamily: "'Vazirmatn', sans-serif" }} />
+                      <button type="button" onClick={() => togglePassword("reg")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex" }}>
+                        {showPasswords["reg"] ? <EyeOff size={18} color="var(--muted-foreground)" /> : <Eye size={18} color="var(--muted-foreground)" />}
+                      </button>
+                      <input type={showPasswords["reg"] ? "text" : "password"} dir="ltr" placeholder="حداقل ۴ کاراکتر" value={regPassword} onChange={(e) => setRegPassword(e.target.value)} className="flex-1 bg-transparent outline-none" style={{ color: "var(--foreground)", fontSize: "0.9rem", fontFamily: "'Vazirmatn', sans-serif" }} />
                     </div>
                   </div>
 
@@ -643,8 +652,10 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
                       تأیید رمز عبور
                     </label>
                     <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ backgroundColor: "var(--input-background)" }}>
-                      <Lock size={18} color="var(--muted-foreground)" />
-                      <input type="password" dir="ltr" placeholder="••••••" value={regPasswordConfirm} onChange={(e) => setRegPasswordConfirm(e.target.value)} className="flex-1 bg-transparent outline-none" style={{ color: "var(--foreground)", fontSize: "0.9rem", fontFamily: "'Vazirmatn', sans-serif" }} />
+                      <button type="button" onClick={() => togglePassword("regConfirm")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex" }}>
+                        {showPasswords["regConfirm"] ? <EyeOff size={18} color="var(--muted-foreground)" /> : <Eye size={18} color="var(--muted-foreground)" />}
+                      </button>
+                      <input type={showPasswords["regConfirm"] ? "text" : "password"} dir="ltr" placeholder="••••••" value={regPasswordConfirm} onChange={(e) => setRegPasswordConfirm(e.target.value)} className="flex-1 bg-transparent outline-none" style={{ color: "var(--foreground)", fontSize: "0.9rem", fontFamily: "'Vazirmatn', sans-serif" }} />
                     </div>
                   </div>
 
@@ -666,8 +677,11 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
                 <div className="flex-1 h-px" style={{ backgroundColor: "var(--border)" }} />
               </div>
 
+              <p style={{ fontSize: "0.78rem", color: "var(--muted-foreground)", textAlign: "center", marginBottom: "-8px" }}>
+                حساب کاربری دارید؟
+              </p>
               <button onClick={switchToLogin} className="w-full py-3.5 rounded-2xl transition-all active:scale-95" style={{ backgroundColor: "var(--card)", border: "2px solid var(--border)", color: "var(--foreground)", fontSize: "0.9rem", fontWeight: 600, fontFamily: "'Vazirmatn', sans-serif" }}>
-                حساب دارید؟ ورود
+                ورود
               </button>
             </motion.div>
           )}
@@ -829,9 +843,11 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
                       className="flex items-center gap-3 px-4 py-3 rounded-xl"
                       style={{ backgroundColor: "var(--input-background)" }}
                     >
-                      <Lock size={18} color="var(--muted-foreground)" />
+                      <button type="button" onClick={() => togglePassword("forgot")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex" }}>
+                        {showPasswords["forgot"] ? <EyeOff size={18} color="var(--muted-foreground)" /> : <Eye size={18} color="var(--muted-foreground)" />}
+                      </button>
                       <input
-                        type="password"
+                        type={showPasswords["forgot"] ? "text" : "password"}
                         dir="ltr"
                         placeholder="حداقل ۴ کاراکتر"
                         value={forgotPassword}
