@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   ChevronLeft,
   X,
+  Wrench,
 } from "lucide-react";
 import { ChecklistItem, ActionItem, UserProfile } from "./data";
 
@@ -177,9 +178,17 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
         className="px-5 pt-8 pb-6"
         style={{ backgroundColor: "var(--primary)" }}
       >
-        <h1 style={{ color: "white", fontSize: "1.25rem", fontWeight: 700 }}>
-          ابزارها
-        </h1>
+        <div className="flex items-center justify-between">
+          <h1 style={{ color: "white", fontSize: "1.25rem", fontWeight: 700 }}>
+            ابزارها
+          </h1>
+          <div
+            className="w-12 h-12 rounded-full flex items-center justify-center"
+            style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
+          >
+            <Wrench size={22} color="white" />
+          </div>
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto px-5 py-4">
