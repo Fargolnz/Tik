@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Check, Edit2, Trash2, Plus, Download, ChevronDown, ChevronUp } from "lucide-react";
+import { Check, Edit2, Trash2, Plus, Download, ChevronDown, ChevronUp, X } from "lucide-react";
 import { ChecklistItem } from "./data";
 import { toPersianNumber } from "./data";
 
@@ -44,6 +44,7 @@ export function ChecklistView({ items, onUpdate, onDownload }: ChecklistViewProp
   const [newCategory, setNewCategory] = useState("سایر");
   const [filter, setFilter] = useState<"all" | "unchecked" | "checked">("all");
   const [hoveredOption, setHoveredOption] = useState<string | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const categories = useMemo(() => {
     const cats = Array.from(new Set(items.map((i) => i.category)));
@@ -138,7 +139,7 @@ export function ChecklistView({ items, onUpdate, onDownload }: ChecklistViewProp
         {/* Progress */}
         <div className="mb-2 flex justify-between items-center">
           <span style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.8rem" }}>
-            {toPersianNumber(checkedCount)} از {toPersianNumber(items.length)} آیتم تهیه شده
+            {toPersianNumber(checkedCount)} از {toPersianNumber(items.length)} مورد تهیه شده
           </span>
           <span style={{ color: "white", fontSize: "0.9rem", fontWeight: 700 }}>
             {toPersianNumber(progress)}٪
@@ -261,97 +262,11 @@ export function ChecklistView({ items, onUpdate, onDownload }: ChecklistViewProp
           margin: "0 auto",
         }}
       >
-        <AnimatePresence>
-          {showAddForm && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              className="rounded-2xl p-4 mb-3"
-              style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}
-            >
-              <input
-                placeholder="نام آیتم جدید"
-                value={newTitle}
-                onChange={(e) => setNewTitle(e.target.value)}
-                className="w-full p-2 rounded-xl mb-2 outline-none"
-                style={{
-                  backgroundColor: "var(--input-background)",
-                  color: "var(--foreground)",
-                  fontSize: "0.9rem",
-                  fontFamily: "'Vazirmatn', sans-serif",
-                  border: "none",
-                }}
-                dir="rtl"
-              />
-              <input
-                placeholder="مقدار (اختیاری)"
-                value={newQty}
-                onChange={(e) => setNewQty(e.target.value)}
-                className="w-full p-2 rounded-xl mb-2 outline-none"
-                style={{
-                  backgroundColor: "var(--input-background)",
-                  color: "var(--foreground)",
-                  fontSize: "0.9rem",
-                  fontFamily: "'Vazirmatn', sans-serif",
-                  border: "none",
-                }}
-                dir="rtl"
-              />
-              <select
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-                className="w-full p-2 rounded-xl mb-3 outline-none"
-                style={{
-                  backgroundColor: "var(--input-background)",
-                  color: "var(--foreground)",
-                  fontSize: "0.9rem",
-                  fontFamily: "'Vazirmatn', sans-serif",
-                  border: "none",
-                }}
-                dir="rtl"
-              >
-                {Object.keys(categoryIcons).map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-              <div className="flex gap-2">
-                <button
-                  onClick={addItem}
-                  className="flex-1 py-2.5 rounded-xl text-white"
-                  style={{
-                    backgroundColor: "var(--primary)",
-                    fontFamily: "'Vazirmatn', sans-serif",
-                    fontSize: "0.9rem",
-                  }}
-                >
-                  افزودن
-                </button>
-                <button
-                  onClick={() => setShowAddForm(false)}
-                  className="flex-1 py-2.5 rounded-xl"
-                  style={{
-                    backgroundColor: "var(--muted)",
-                    color: "var(--foreground)",
-                    fontFamily: "'Vazirmatn', sans-serif",
-                    fontSize: "0.9rem",
-                  }}
-                >
-                  انصراف
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-        
         <button
-          onClick={() => setShowAddForm(!showAddForm)}
+          onClick={() => setShowAddForm(true)}
           className="w-full px-32 py-3.5 rounded-2xl flex items-center justify-center gap-2 text-white transition-all active:scale-95"
           style={{
-            backgroundColor: showAddForm ? "var(--muted)" : "var(--primary)",
-            color: showAddForm ? "var(--foreground)" : "white",
+            backgroundColor: "var(--primary)",
             fontFamily: "'Vazirmatn', sans-serif",
             fontSize: "0.8rem",
             fontWeight: 600,
@@ -361,6 +276,164 @@ export function ChecklistView({ items, onUpdate, onDownload }: ChecklistViewProp
           افزودن مورد دلخواه
         </button>
       </div>
+
+      {/* Add Item Modal */}
+      <AnimatePresence>
+        {showAddForm && (
+          <>
+            <motion.div
+              className="fixed inset-0 z-40"
+              style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowAddForm(false)}
+            />
+            <motion.div
+              className="fixed inset-0 z-50 flex items-center justify-center p-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.div
+                className="w-full max-w-sm rounded-3xl p-6"
+                style={{
+                  backgroundColor: "var(--card)",
+                  fontFamily: "'Vazirmatn', sans-serif",
+                }}
+                dir="rtl"
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              >
+                <div className="flex justify-between items-center mb-5">
+                  <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--foreground)" }}>
+                    افزودن مورد دلخواه
+                  </h3>
+                  <button onClick={() => setShowAddForm(false)}>
+                    <X size={20} color="var(--muted-foreground)" />
+                  </button>
+                </div>
+
+                <input
+                  placeholder="نام آیتم جدید"
+                  value={newTitle}
+                  onChange={(e) => setNewTitle(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl outline-none mb-3"
+                  style={{
+                    backgroundColor: "var(--input-background)",
+                    color: "var(--foreground)",
+                    fontSize: "0.9rem",
+                    fontFamily: "'Vazirmatn', sans-serif",
+                    border: "1px solid var(--border)",
+                  }}
+                  dir="rtl"
+                />
+
+                <input
+                  placeholder="مقدار (اختیاری)"
+                  value={newQty}
+                  onChange={(e) => setNewQty(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl outline-none mb-3"
+                  style={{
+                    backgroundColor: "var(--input-background)",
+                    color: "var(--foreground)",
+                    fontSize: "0.9rem",
+                    fontFamily: "'Vazirmatn', sans-serif",
+                    border: "1px solid var(--border)",
+                  }}
+                  dir="rtl"
+                />
+
+                {/* Custom Category Dropdown */}
+                <div className="relative mb-4">
+                  <button
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    className="w-full px-4 py-2.5 rounded-xl flex items-center justify-between outline-none"
+                    style={{
+                      backgroundColor: "var(--input-background)",
+                      color: "var(--foreground)",
+                      fontSize: "0.9rem",
+                      fontFamily: "'Vazirmatn', sans-serif",
+                      border: "1px solid var(--border)",
+                    }}
+                    dir="rtl"
+                  >
+                    <span>{categoryIcons[newCategory]} {newCategory}</span>
+                    <ChevronDown size={16} style={{ transform: dropdownOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }} />
+                  </button>
+                  {dropdownOpen && (
+                    <>
+                      <div className="fixed inset-0 z-10" onClick={() => setDropdownOpen(false)} />
+                      <motion.div
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="absolute left-0 right-0 z-20 mt-1 rounded-xl overflow-hidden"
+                        style={{
+                          backgroundColor: "var(--card)",
+                          border: "1px solid var(--border)",
+                          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                        }}
+                      >
+                        {Object.keys(categoryIcons).map((c) => (
+                          <button
+                            key={c}
+                            onClick={() => {
+                              setNewCategory(c);
+                              setDropdownOpen(false);
+                            }}
+                            className="w-full px-4 py-2.5 text-right flex items-center gap-2 transition-colors"
+                            style={{
+                              backgroundColor: newCategory === c ? "var(--muted)" : "transparent",
+                              color: "var(--foreground)",
+                              fontSize: "0.9rem",
+                              fontFamily: "'Vazirmatn', sans-serif",
+                            }}
+                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#C0392B"; e.currentTarget.style.color = "white"; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = newCategory === c ? "var(--muted)" : "transparent"; e.currentTarget.style.color = "var(--foreground)"; }}
+                          >
+                            <span>{categoryIcons[c]}</span>
+                            <span>{c}</span>
+                          </button>
+                        ))}
+                      </motion.div>
+                    </>
+                  )}
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={addItem}
+                    className="flex-1 py-2.5 rounded-xl text-white transition-all active:scale-95"
+                    style={{
+                      backgroundColor: "var(--primary)",
+                      fontFamily: "'Vazirmatn', sans-serif",
+                      fontSize: "0.9rem",
+                      fontWeight: 600,
+                    }}
+                  >
+                    افزودن
+                  </button>
+                  <button
+                    onClick={() => setShowAddForm(false)}
+                    className="flex-1 py-2.5 rounded-xl transition-all active:scale-95"
+                    style={{
+                      backgroundColor: "var(--muted)",
+                      color: "var(--foreground)",
+                      fontFamily: "'Vazirmatn', sans-serif",
+                      fontSize: "0.9rem",
+                      fontWeight: 600,
+                    }}
+                  >
+                    انصراف
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
