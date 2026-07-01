@@ -899,9 +899,9 @@ function DownloadModal({
               </button>
             </div>
             <div className="flex flex-col gap-3">
-              <DownloadBtn icon={<FileText size={22} />} title="فایل متنی (.txt)" desc="قابل چاپ و اشتراک‌گذاری" action={downloadTxt} />
-              <DownloadBtn icon={<FileSpreadsheet size={22} />} title="فایل JSON" desc="برای بازگردانی و ویرایش" action={downloadJson} />
-              <DownloadBtn icon={<Globe size={22} />} title="فایل HTML" desc="با قالب‌بندی زیبا برای چاپ" action={downloadHtml} />
+              <DownloadBtn icon={<FileText size={22} color="#C0392B" />} title="فایل TXT" desc="قابل چاپ و اشتراک‌گذاری" action={downloadTxt} />
+              <DownloadBtn icon={<FileSpreadsheet size={22} color="#27AE60"/>} title="فایل JSON" desc="برای بازگردانی و ویرایش" action={downloadJson} />
+              <DownloadBtn icon={<Globe size={22} color="#2980B9"/>} title="فایل HTML" desc="با قالب‌بندی زیبا برای چاپ" action={downloadHtml} />
             </div>
           </motion.div>
           </motion.div>
