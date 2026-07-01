@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import {
   User,
-  Phone,
+  Calendar,
   Users,
   Baby,
   Heart,
@@ -105,7 +105,7 @@ export function ProfileTab({
             className="flex items-center gap-2 p-3 rounded-xl"
             style={{ backgroundColor: "var(--muted)" }}
           >
-            <Phone size={14} color="var(--muted-foreground)" />
+            <Calendar size={14} color="var(--muted-foreground)" />
             <span style={{ fontSize: "0.78rem", color: "var(--muted-foreground)" }}>
               عضویت از {new Date(user.created_at).toLocaleDateString("fa-IR")}
             </span>
