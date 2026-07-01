@@ -718,7 +718,7 @@ function NavTab({
             transform: "translateX(8px)",
           }}
         >
-          {badge > 99 ? "99+" : badge}
+          {badge > 99 ? `${toPersianNumber(99)}+` : toPersianNumber(badge)}
         </span>
       )}
     </button>

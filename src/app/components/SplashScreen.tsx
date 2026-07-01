@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { ShieldCheck } from "lucide-react";
+import { toPersianNumber } from "./data";
 
 interface SplashScreenProps {
   onStart: () => void;
@@ -84,7 +85,7 @@ export function SplashScreen({ onStart }: SplashScreenProps) {
         </button>
 
         <p className="text-center text-muted-foreground" style={{ fontSize: "0.75rem" }}>
-          Tik v1.0.0
+          Tik v{toPersianNumber("1.0.0")}
         </p>
       </motion.div>
     </div>

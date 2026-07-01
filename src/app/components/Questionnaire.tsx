@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-import { UserProfile, diseaseOptions } from "./data";
+import { UserProfile, diseaseOptions, toPersianNumber } from "./data";
 
 interface QuestionnaireProps {
   onComplete: (profile: UserProfile) => void;
@@ -62,7 +62,7 @@ export function Questionnaire({ onComplete, initialProfile }: QuestionnaireProps
             <ChevronRight size={24} color="white" />
           </button>
           <span style={{ color: "white", fontSize: "0.85rem", opacity: 0.8 }}>
-            {step + 1} از {steps.length}
+            {toPersianNumber(step + 1)} از {toPersianNumber(steps.length)}
           </span>
           <div className="w-6" />
         </div>
@@ -208,7 +208,7 @@ function CounterInput({
         className="text-foreground"
         style={{ fontSize: "2rem", fontWeight: 700, minWidth: "3rem", textAlign: "center" }}
       >
-        {value}
+        {toPersianNumber(value)}
       </span>
       <button
         onClick={() => onChange(Math.min(max, value + 1))}
