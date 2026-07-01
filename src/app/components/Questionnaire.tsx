@@ -5,6 +5,7 @@ import { UserProfile, diseaseOptions } from "./data";
 
 interface QuestionnaireProps {
   onComplete: (profile: UserProfile) => void;
+  initialProfile?: UserProfile | null;
 }
 
 const steps = [
@@ -15,9 +16,9 @@ const steps = [
   "مهارت‌ها",
 ];
 
-export function Questionnaire({ onComplete }: QuestionnaireProps) {
+export function Questionnaire({ onComplete, initialProfile }: QuestionnaireProps) {
   const [step, setStep] = useState(0);
-  const [profile, setProfile] = useState<UserProfile>({
+  const [profile, setProfile] = useState<UserProfile>(initialProfile || {
     familyCount: 2,
     hasChild: false,
     childCount: 0,
