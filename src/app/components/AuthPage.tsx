@@ -1,0 +1,930 @@
+import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { ShieldCheck, Phone, Lock, User, ArrowLeft, Mail } from "lucide-react";
+import { api, setToken } from "../api";
+
+type AuthMode = "login" | "register" | "forgot";
+
+interface AuthPageProps {
+  onAuthenticated: () => void;
+}
+
+export function AuthPage({ onAuthenticated }: AuthPageProps) {
+  const [mode, setMode] = useState<AuthMode>("login");
+  const [loginMethod, setLoginMethod] = useState<"password" | "otp">("password");
+
+  // Login state
+  const [loginPhone, setLoginPhone] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+
+  // OTP state
+  const [otpCode, setOtpCode] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
+
+  // Register state
+  const [regName, setRegName] = useState("");
+  const [regPhone, setRegPhone] = useState("");
+  const [regPhoneConfirm, setRegPhoneConfirm] = useState("");
+  const [regPassword, setRegPassword] = useState("");
+  const [regPasswordConfirm, setRegPasswordConfirm] = useState("");
+
+  // Forgot password state
+  const [forgotPhone, setForgotPhone] = useState("");
+  const [forgotCode, setForgotCode] = useState("");
+  const [forgotPassword, setForgotPassword] = useState("");
+  const [forgotStep, setForgotStep] = useState<"phone" | "code" | "password">("phone");
+
+  // Common
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const clearMessages = () => {
+    setError("");
+    setSuccess("");
+  };
+
+  const handleLogin = async () => {
+    clearMessages();
+    if (!loginPhone) {
+      setError("لطفاً شماره تلفن را وارد کنید");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await api.auth.login({ phone: loginPhone, password: loginPassword });
+      setToken(res.token);
+      onAuthenticated();
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "خطا در ورود");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSendOtp = async () => {
+    clearMessages();
+    if (!loginPhone) {
+      setError("لطفاً شماره تلفن را وارد کنید");
+      return;
+    }
+    setOtpLoading(true);
+    try {
+      await api.auth.sendOtp({ phone: loginPhone });
+      setOtpSent(true);
+      setSuccess("کد تأیید ارسال شد");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "خطا در ارسال کد");
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    clearMessages();
+    if (!otpCode) {
+      setError("لطفاً کد تأیید را وارد کنید");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await api.auth.verifyOtp({ phone: loginPhone, code: otpCode });
+      setToken(res.token);
+      onAuthenticated();
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "خطا در تأیید کد");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRegister = async () => {
+    clearMessages();
+    if (!regName || !regPhone || !regPhoneConfirm || !regPassword || !regPasswordConfirm) {
+      setError("لطفاً تمام فیلدها را پر کنید");
+      return;
+    }
+    if (regPhone !== regPhoneConfirm) {
+      setError("شماره تلفن با تأیید آن مطابقت ندارد");
+      return;
+    }
+    if (regPassword !== regPasswordConfirm) {
+      setError("رمز عبور با تأیید آن مطابقت ندارد");
+      return;
+    }
+    if (regPassword.length < 4) {
+      setError("رمز عبور باید حداقل ۴ کاراکتر باشد");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await api.auth.register({
+        full_name: regName,
+        phone: regPhone,
+        password: regPassword,
+      });
+      setToken(res.token);
+      onAuthenticated();
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "خطا در ثبت‌نام");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotSendCode = async () => {
+    clearMessages();
+    if (!forgotPhone) {
+      setError("لطفاً شماره تلفن را وارد کنید");
+      return;
+    }
+    setLoading(true);
+    try {
+      await api.auth.sendOtp({ phone: forgotPhone });
+      setForgotStep("code");
+      setSuccess("کد تأیید ارسال شد");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "خطا در ارسال کد");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotVerifyCode = async () => {
+    clearMessages();
+    if (!forgotCode) {
+      setError("لطفاً کد تأیید را وارد کنید");
+      return;
+    }
+    setForgotStep("password");
+  };
+
+  const handleForgotNewPassword = async () => {
+    clearMessages();
+    if (!forgotPassword || forgotPassword.length < 4) {
+      setError("رمز عبور باید حداقل ۴ کاراکتر باشد");
+      return;
+    }
+    setLoading(true);
+    try {
+      await api.auth.forgotPassword({
+        phone: forgotPhone,
+        code: forgotCode,
+        new_password: forgotPassword,
+      });
+      setSuccess("رمز عبور با موفقیت تغییر کرد");
+      setTimeout(() => {
+        setMode("login");
+        setForgotStep("phone");
+        setForgotPhone("");
+        setForgotCode("");
+        setForgotPassword("");
+      }, 1500);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "خطا در تغییر رمز");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const switchToRegister = () => {
+    clearMessages();
+    setMode("register");
+  };
+
+  const switchToLogin = () => {
+    clearMessages();
+    setMode("login");
+  };
+
+  const switchToForgot = () => {
+    clearMessages();
+    setMode("forgot");
+    setForgotStep("phone");
+  };
+
+  return (
+    <div
+      className="flex flex-col h-full bg-background"
+      dir="rtl"
+      style={{ fontFamily: "'Vazirmatn', sans-serif" }}
+    >
+      <div className="flex-1 overflow-y-auto px-5 pt-12 pb-6">
+        <motion.div
+          className="flex flex-col items-center gap-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <motion.div
+            className="w-20 h-20 rounded-2xl flex items-center justify-center shadow-lg"
+            style={{ backgroundColor: "var(--primary)" }}
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.4, delay: 0.1, type: "spring" }}
+          >
+            <ShieldCheck size={40} color="white" strokeWidth={1.5} />
+          </motion.div>
+
+          <div className="text-center">
+            <h1
+              style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--foreground)" }}
+            >
+              {mode === "login" ? "ورود" : mode === "register" ? "ثبت‌نام" : "بازیابی رمز عبور"}
+            </h1>
+            <p
+              className="mt-1"
+              style={{ fontSize: "0.85rem", color: "var(--muted-foreground)" }}
+            >
+              {mode === "login"
+                ? "به حساب کاربری خود وارد شوید"
+                : mode === "register"
+                ? "یک حساب کاربری جدید بسازید"
+                : "رمز عبور خود را بازنشانی کنید"}
+            </p>
+          </div>
+        </motion.div>
+
+        <AnimatePresence mode="wait">
+          {mode === "login" && (
+            <motion.div
+              key="login"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.25 }}
+              className="flex flex-col gap-4 mt-6"
+            >
+              {/* Login method tabs */}
+              <div
+                className="flex rounded-xl p-1"
+                style={{ backgroundColor: "var(--muted)" }}
+              >
+                <button
+                  onClick={() => {
+                    setLoginMethod("password");
+                    setOtpSent(false);
+                    setOtpCode("");
+                    clearMessages();
+                  }}
+                  className="flex-1 py-2.5 rounded-lg text-center text-sm font-medium transition-all"
+                  style={{
+                    backgroundColor: loginMethod === "password" ? "var(--card)" : "transparent",
+                    color: loginMethod === "password" ? "var(--foreground)" : "var(--muted-foreground)",
+                    boxShadow: loginMethod === "password" ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
+                  }}
+                >
+                  رمز عبور
+                </button>
+                <button
+                  onClick={() => {
+                    setLoginMethod("otp");
+                    clearMessages();
+                  }}
+                  className="flex-1 py-2.5 rounded-lg text-center text-sm font-medium transition-all"
+                  style={{
+                    backgroundColor: loginMethod === "otp" ? "var(--card)" : "transparent",
+                    color: loginMethod === "otp" ? "var(--foreground)" : "var(--muted-foreground)",
+                    boxShadow: loginMethod === "otp" ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
+                  }}
+                >
+                  کد یک‌بارمصرف
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <label
+                  style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}
+                >
+                  شماره تلفن
+                </label>
+                <div
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl"
+                  style={{ backgroundColor: "var(--input-background)" }}
+                >
+                  <Phone size={18} color="var(--muted-foreground)" />
+                  <input
+                    type="tel"
+                    dir="ltr"
+                    placeholder="09123456789"
+                    value={loginPhone}
+                    onChange={(e) => setLoginPhone(e.target.value)}
+                    className="flex-1 bg-transparent outline-none"
+                    style={{
+                      color: "var(--foreground)",
+                      fontSize: "0.9rem",
+                      fontFamily: "'Vazirmatn', sans-serif",
+                    }}
+                  />
+                </div>
+              </div>
+
+              {loginMethod === "password" ? (
+                <>
+                  <div className="flex flex-col gap-3">
+                    <label
+                      style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}
+                    >
+                      رمز عبور
+                    </label>
+                    <div
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl"
+                      style={{ backgroundColor: "var(--input-background)" }}
+                    >
+                      <Lock size={18} color="var(--muted-foreground)" />
+                      <input
+                        type="password"
+                        dir="ltr"
+                        placeholder="••••••"
+                        value={loginPassword}
+                        onChange={(e) => setLoginPassword(e.target.value)}
+                        className="flex-1 bg-transparent outline-none"
+                        style={{
+                          color: "var(--foreground)",
+                          fontSize: "0.9rem",
+                          fontFamily: "'Vazirmatn', sans-serif",
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <button
+                    onClick={switchToForgot}
+                    className="text-left self-start"
+                    style={{ fontSize: "0.8rem", color: "var(--primary)" }}
+                  >
+                    رمز عبور را فراموش کرده‌اید؟
+                  </button>
+                </>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {!otpSent ? (
+                    <button
+                      onClick={handleSendOtp}
+                      disabled={otpLoading}
+                      className="w-full py-4 rounded-2xl text-white transition-all active:scale-95 disabled:opacity-50"
+                      style={{
+                        backgroundColor: "var(--primary)",
+                        fontSize: "1rem",
+                        fontWeight: 600,
+                        fontFamily: "'Vazirmatn', sans-serif",
+                      }}
+                    >
+                      {otpLoading ? "در حال ارسال..." : "ارسال کد تأیید"}
+                    </button>
+                  ) : (
+                    <>
+                      <label
+                        style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}
+                      >
+                        کد تأیید
+                      </label>
+                      <div
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl"
+                        style={{ backgroundColor: "var(--input-background)" }}
+                      >
+                        <Lock size={18} color="var(--muted-foreground)" />
+                        <input
+                          type="text"
+                          dir="ltr"
+                          placeholder="000000"
+                          value={otpCode}
+                          onChange={(e) => setOtpCode(e.target.value)}
+                          maxLength={6}
+                          className="flex-1 bg-transparent outline-none"
+                          style={{
+                            color: "var(--foreground)",
+                            fontSize: "0.9rem",
+                            fontFamily: "'Vazirmatn', sans-serif",
+                            letterSpacing: "0.5em",
+                          }}
+                        />
+                      </div>
+                      <button
+                        onClick={handleSendOtp}
+                        disabled={otpLoading}
+                        style={{
+                          fontSize: "0.8rem",
+                          color: "var(--primary)",
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                          textAlign: "left",
+                        }}
+                      >
+                        ارسال مجدد کد
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-3 rounded-xl text-sm"
+                  style={{
+                    backgroundColor: "#FDEDEC",
+                    color: "#C0392B",
+                    border: "1px solid #F5C6CB",
+                  }}
+                >
+                  {error}
+                </motion.div>
+              )}
+
+              {success && (
+                <motion.div
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-3 rounded-xl text-sm"
+                  style={{
+                    backgroundColor: "#EAFAF1",
+                    color: "#27AE60",
+                    border: "1px solid #A3E4D7",
+                  }}
+                >
+                  {success}
+                </motion.div>
+              )}
+
+              <button
+                onClick={loginMethod === "password" ? handleLogin : handleVerifyOtp}
+                disabled={loading || (loginMethod === "otp" && !otpSent)}
+                className="w-full py-4 rounded-2xl text-white transition-all active:scale-95 disabled:opacity-50"
+                style={{
+                  backgroundColor: "var(--primary)",
+                  fontSize: "1rem",
+                  fontWeight: 600,
+                  fontFamily: "'Vazirmatn', sans-serif",
+                }}
+              >
+                {loading ? "..." : loginMethod === "password" ? "ورود" : "تأیید کد"}
+              </button>
+
+              <div className="flex items-center gap-3 my-1">
+                <div
+                  className="flex-1 h-px"
+                  style={{ backgroundColor: "var(--border)" }}
+                />
+                <span
+                  style={{ fontSize: "0.8rem", color: "var(--muted-foreground)" }}
+                >
+                  یا
+                </span>
+                <div
+                  className="flex-1 h-px"
+                  style={{ backgroundColor: "var(--border)" }}
+                />
+              </div>
+
+              <button
+                onClick={switchToRegister}
+                className="w-full py-3.5 rounded-2xl transition-all active:scale-95"
+                style={{
+                  backgroundColor: "var(--card)",
+                  border: "2px solid var(--border)",
+                  color: "var(--foreground)",
+                  fontSize: "0.9rem",
+                  fontWeight: 600,
+                  fontFamily: "'Vazirmatn', sans-serif",
+                }}
+              >
+                حساب کاربری ندارید؟ ثبت‌نام
+              </button>
+            </motion.div>
+          )}
+
+          {mode === "register" && (
+            <motion.div
+              key="register"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.25 }}
+              className="flex flex-col gap-4 mt-6"
+            >
+              <div className="flex flex-col gap-3">
+                <label
+                  style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}
+                >
+                  نام و نام خانوادگی
+                </label>
+                <div
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl"
+                  style={{ backgroundColor: "var(--input-background)" }}
+                >
+                  <User size={18} color="var(--muted-foreground)" />
+                  <input
+                    type="text"
+                    placeholder="مثال: علی محمدی"
+                    value={regName}
+                    onChange={(e) => setRegName(e.target.value)}
+                    className="flex-1 bg-transparent outline-none"
+                    style={{
+                      color: "var(--foreground)",
+                      fontSize: "0.9rem",
+                      fontFamily: "'Vazirmatn', sans-serif",
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <label
+                  style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}
+                >
+                  شماره تلفن
+                </label>
+                <div
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl"
+                  style={{ backgroundColor: "var(--input-background)" }}
+                >
+                  <Phone size={18} color="var(--muted-foreground)" />
+                  <input
+                    type="tel"
+                    dir="ltr"
+                    placeholder="09123456789"
+                    value={regPhone}
+                    onChange={(e) => setRegPhone(e.target.value)}
+                    className="flex-1 bg-transparent outline-none"
+                    style={{
+                      color: "var(--foreground)",
+                      fontSize: "0.9rem",
+                      fontFamily: "'Vazirmatn', sans-serif",
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <label
+                  style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}
+                >
+                  تأیید شماره تلفن
+                </label>
+                <div
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl"
+                  style={{ backgroundColor: "var(--input-background)" }}
+                >
+                  <Phone size={18} color="var(--muted-foreground)" />
+                  <input
+                    type="tel"
+                    dir="ltr"
+                    placeholder="09123456789"
+                    value={regPhoneConfirm}
+                    onChange={(e) => setRegPhoneConfirm(e.target.value)}
+                    className="flex-1 bg-transparent outline-none"
+                    style={{
+                      color: "var(--foreground)",
+                      fontSize: "0.9rem",
+                      fontFamily: "'Vazirmatn', sans-serif",
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <label
+                  style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}
+                >
+                  رمز عبور
+                </label>
+                <div
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl"
+                  style={{ backgroundColor: "var(--input-background)" }}
+                >
+                  <Lock size={18} color="var(--muted-foreground)" />
+                  <input
+                    type="password"
+                    dir="ltr"
+                    placeholder="حداقل ۴ کاراکتر"
+                    value={regPassword}
+                    onChange={(e) => setRegPassword(e.target.value)}
+                    className="flex-1 bg-transparent outline-none"
+                    style={{
+                      color: "var(--foreground)",
+                      fontSize: "0.9rem",
+                      fontFamily: "'Vazirmatn', sans-serif",
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <label
+                  style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}
+                >
+                  تأیید رمز عبور
+                </label>
+                <div
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl"
+                  style={{ backgroundColor: "var(--input-background)" }}
+                >
+                  <Lock size={18} color="var(--muted-foreground)" />
+                  <input
+                    type="password"
+                    dir="ltr"
+                    placeholder="••••••"
+                    value={regPasswordConfirm}
+                    onChange={(e) => setRegPasswordConfirm(e.target.value)}
+                    className="flex-1 bg-transparent outline-none"
+                    style={{
+                      color: "var(--foreground)",
+                      fontSize: "0.9rem",
+                      fontFamily: "'Vazirmatn', sans-serif",
+                    }}
+                  />
+                </div>
+              </div>
+
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-3 rounded-xl text-sm"
+                  style={{
+                    backgroundColor: "#FDEDEC",
+                    color: "#C0392B",
+                    border: "1px solid #F5C6CB",
+                  }}
+                >
+                  {error}
+                </motion.div>
+              )}
+
+              <button
+                onClick={handleRegister}
+                disabled={loading}
+                className="w-full py-4 rounded-2xl text-white transition-all active:scale-95 disabled:opacity-50"
+                style={{
+                  backgroundColor: "#27AE60",
+                  fontSize: "1rem",
+                  fontWeight: 600,
+                  fontFamily: "'Vazirmatn', sans-serif",
+                }}
+              >
+                {loading ? "..." : "ثبت‌نام"}
+              </button>
+
+              <div className="flex items-center gap-3 my-1">
+                <div
+                  className="flex-1 h-px"
+                  style={{ backgroundColor: "var(--border)" }}
+                />
+                <span
+                  style={{ fontSize: "0.8rem", color: "var(--muted-foreground)" }}
+                >
+                  یا
+                </span>
+                <div
+                  className="flex-1 h-px"
+                  style={{ backgroundColor: "var(--border)" }}
+                />
+              </div>
+
+              <button
+                onClick={switchToLogin}
+                className="w-full py-3.5 rounded-2xl transition-all active:scale-95"
+                style={{
+                  backgroundColor: "var(--card)",
+                  border: "2px solid var(--border)",
+                  color: "var(--foreground)",
+                  fontSize: "0.9rem",
+                  fontWeight: 600,
+                  fontFamily: "'Vazirmatn', sans-serif",
+                }}
+              >
+                حساب دارید؟ ورود
+              </button>
+            </motion.div>
+          )}
+
+          {mode === "forgot" && (
+            <motion.div
+              key="forgot"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.25 }}
+              className="flex flex-col gap-4 mt-6"
+            >
+              {forgotStep === "phone" && (
+                <>
+                  <div className="flex flex-col gap-3">
+                    <label
+                      style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}
+                    >
+                      شماره تلفن
+                    </label>
+                    <div
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl"
+                      style={{ backgroundColor: "var(--input-background)" }}
+                    >
+                      <Phone size={18} color="var(--muted-foreground)" />
+                      <input
+                        type="tel"
+                        dir="ltr"
+                        placeholder="09123456789"
+                        value={forgotPhone}
+                        onChange={(e) => setForgotPhone(e.target.value)}
+                        className="flex-1 bg-transparent outline-none"
+                        style={{
+                          color: "var(--foreground)",
+                          fontSize: "0.9rem",
+                          fontFamily: "'Vazirmatn', sans-serif",
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="p-3 rounded-xl text-sm"
+                      style={{
+                        backgroundColor: "#FDEDEC",
+                        color: "#C0392B",
+                        border: "1px solid #F5C6CB",
+                      }}
+                    >
+                      {error}
+                    </motion.div>
+                  )}
+
+                  <button
+                    onClick={handleForgotSendCode}
+                    disabled={loading}
+                    className="w-full py-4 rounded-2xl text-white transition-all active:scale-95 disabled:opacity-50"
+                    style={{
+                      backgroundColor: "var(--primary)",
+                      fontSize: "1rem",
+                      fontWeight: 600,
+                      fontFamily: "'Vazirmatn', sans-serif",
+                    }}
+                  >
+                    {loading ? "..." : "ارسال کد تأیید"}
+                  </button>
+                </>
+              )}
+
+              {forgotStep === "code" && (
+                <>
+                  <div className="flex flex-col gap-3">
+                    <label
+                      style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}
+                    >
+                      کد تأیید
+                    </label>
+                    <div
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl"
+                      style={{ backgroundColor: "var(--input-background)" }}
+                    >
+                      <Lock size={18} color="var(--muted-foreground)" />
+                      <input
+                        type="text"
+                        dir="ltr"
+                        placeholder="000000"
+                        value={forgotCode}
+                        onChange={(e) => setForgotCode(e.target.value)}
+                        maxLength={6}
+                        className="flex-1 bg-transparent outline-none"
+                        style={{
+                          color: "var(--foreground)",
+                          fontSize: "0.9rem",
+                          fontFamily: "'Vazirmatn', sans-serif",
+                          letterSpacing: "0.5em",
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="p-3 rounded-xl text-sm"
+                      style={{
+                        backgroundColor: "#FDEDEC",
+                        color: "#C0392B",
+                        border: "1px solid #F5C6CB",
+                      }}
+                    >
+                      {error}
+                    </motion.div>
+                  )}
+
+                  <button
+                    onClick={handleForgotVerifyCode}
+                    className="w-full py-4 rounded-2xl text-white transition-all active:scale-95"
+                    style={{
+                      backgroundColor: "var(--primary)",
+                      fontSize: "1rem",
+                      fontWeight: 600,
+                      fontFamily: "'Vazirmatn', sans-serif",
+                    }}
+                  >
+                    تأیید کد
+                  </button>
+                </>
+              )}
+
+              {forgotStep === "password" && (
+                <>
+                  {success && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="p-3 rounded-xl text-sm"
+                      style={{
+                        backgroundColor: "#EAFAF1",
+                        color: "#27AE60",
+                        border: "1px solid #A3E4D7",
+                      }}
+                    >
+                      {success}
+                    </motion.div>
+                  )}
+
+                  <div className="flex flex-col gap-3">
+                    <label
+                      style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}
+                    >
+                      رمز عبور جدید
+                    </label>
+                    <div
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl"
+                      style={{ backgroundColor: "var(--input-background)" }}
+                    >
+                      <Lock size={18} color="var(--muted-foreground)" />
+                      <input
+                        type="password"
+                        dir="ltr"
+                        placeholder="حداقل ۴ کاراکتر"
+                        value={forgotPassword}
+                        onChange={(e) => setForgotPassword(e.target.value)}
+                        className="flex-1 bg-transparent outline-none"
+                        style={{
+                          color: "var(--foreground)",
+                          fontSize: "0.9rem",
+                          fontFamily: "'Vazirmatn', sans-serif",
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="p-3 rounded-xl text-sm"
+                      style={{
+                        backgroundColor: "#FDEDEC",
+                        color: "#C0392B",
+                        border: "1px solid #F5C6CB",
+                      }}
+                    >
+                      {error}
+                    </motion.div>
+                  )}
+
+                  <button
+                    onClick={handleForgotNewPassword}
+                    disabled={loading}
+                    className="w-full py-4 rounded-2xl text-white transition-all active:scale-95 disabled:opacity-50"
+                    style={{
+                      backgroundColor: "#27AE60",
+                      fontSize: "1rem",
+                      fontWeight: 600,
+                      fontFamily: "'Vazirmatn', sans-serif",
+                    }}
+                  >
+                    {loading ? "..." : "تغییر رمز عبور"}
+                  </button>
+                </>
+              )}
+
+              <button
+                onClick={switchToLogin}
+                className="w-full py-3.5 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2"
+                style={{
+                  backgroundColor: "var(--card)",
+                  border: "2px solid var(--border)",
+                  color: "var(--muted-foreground)",
+                  fontSize: "0.9rem",
+                  fontWeight: 600,
+                  fontFamily: "'Vazirmatn', sans-serif",
+                }}
+              >
+                <ArrowLeft size={16} />
+                بازگشت به ورود
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
