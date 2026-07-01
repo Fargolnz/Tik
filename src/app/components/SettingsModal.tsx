@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Eye, EyeOff, Check, User, AlertTriangle, ShieldCheck } from "lucide-react";
+import { AlertTriangle, Check, Eye, EyeOff, ShieldCheck, X } from "lucide-react";
 import { UserData, api } from "../api";
 
 interface SettingsModalProps {
@@ -46,27 +46,13 @@ export function SettingsModal({ isOpen, onClose, user, onUpdateUser, onLogout }:
 
   if (!isOpen) return null;
 
-  const handleSaveName = async () => {
-    if (!name.trim()) {
-      setNameError("نام نمی‌تواند خالی باشد");
-      return;
-    }
-    if (name.trim() === user.full_name) {
-      setNameSaved(true);
-      setTimeout(() => setNameSaved(false), 2000);
-      return;
-    }
-    setSavingName(true);
-    setNameError("");
-    try {
+  const handleSaveName = () => {
+    if (!name.trim()) return;
+    if (name.trim() !== user.full_name) {
       onUpdateUser(name.trim());
-      setNameSaved(true);
-      setTimeout(() => setNameSaved(false), 2000);
-    } catch {
-      setNameError("خطا در ذخیره نام");
-    } finally {
-      setSavingName(false);
     }
+    setNameSaved(true);
+    setTimeout(() => setNameSaved(false), 2000);
   };
 
   const handleChangePassword = async () => {
@@ -198,18 +184,12 @@ export function SettingsModal({ isOpen, onClose, user, onUpdateUser, onLogout }:
                 </button>
               </div>
 
-              {/* Change Name */}
-              <div className="mb-6">
+              {/* Name */}
+              <div className="mb-5">
                 <p style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)", marginBottom: 8 }}>
-                  تغییر نام
+                  نام و نام خانوادگی
                 </p>
-                <div className="flex items-center gap-3 mb-3">
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                    style={{ backgroundColor: "var(--muted)" }}
-                  >
-                    <User size={16} color="var(--primary)" />
-                  </div>
+                <div className="flex items-center gap-2">
                   <input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -223,337 +203,292 @@ export function SettingsModal({ isOpen, onClose, user, onUpdateUser, onLogout }:
                     }}
                     dir="rtl"
                   />
+                  <button
+                    onClick={handleSaveName}
+                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all active:scale-90"
+                    style={{
+                      backgroundColor: nameSaved ? "#27AE60" : "var(--primary)",
+                      color: "white",
+                    }}
+                  >
+                    {nameSaved ? <Check size={16} /> : <Check size={16} />}
+                  </button>
                 </div>
                 {nameError && (
-                  <p style={{ fontSize: "0.75rem", color: "#C0392B", marginBottom: 6 }}>{nameError}</p>
+                  <p style={{ fontSize: "0.75rem", color: "#C0392B", marginTop: 4 }}>{nameError}</p>
                 )}
-                <button
-                  onClick={handleSaveName}
-                  disabled={savingName}
-                  className="w-full py-2.5 rounded-xl text-white transition-all active:scale-95 flex items-center justify-center gap-2"
-                  style={{
-                    backgroundColor: "var(--primary)",
-                    fontSize: "0.85rem",
-                    fontWeight: 600,
-                    fontFamily: "'Vazirmatn', sans-serif",
-                    opacity: savingName ? 0.6 : 1,
-                  }}
-                >
-                  {savingName ? (
-                    "در حال ذخیره..."
-                  ) : nameSaved ? (
-                    <><Check size={16} /> ذخیره شد</>
-                  ) : (
-                    "ذخیره نام"
-                  )}
-                </button>
               </div>
 
-              <div style={{ height: 1, backgroundColor: "var(--border)", marginBottom: 6 }} />
+              <div style={{ height: 1, backgroundColor: "var(--border)", marginBottom: 5 }} />
 
-              {/* Change / Forgot Password */}
-              <div className="mb-2">
-                <p style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)", marginBottom: 8, marginTop: 16 }}>
-                  {passwordMode === "change" ? "تغییر رمز عبور" : "فراموشی رمز عبور"}
-                </p>
-
-                {/* Mode toggle */}
-                <div className="flex gap-2 mb-3">
+              {/* Password */}
+              <div className="mb-5">
+                <div className="flex items-center gap-2 mb-3" style={{ marginTop: 12 }}>
+                  <p style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--foreground)" }}>
+                    رمز عبور
+                  </p>
                   <button
-                    onClick={() => { setPasswordMode("change"); setForgotError(""); }}
-                    className="flex-1 py-2 rounded-xl text-xs font-medium transition-all"
+                    onClick={() => { setPasswordMode(passwordMode === "change" ? "forgot" : "change"); setForgotError(""); setForgotStep("send"); }}
                     style={{
-                      backgroundColor: passwordMode === "change" ? "var(--primary)" : "var(--muted)",
-                      color: passwordMode === "change" ? "white" : "var(--muted-foreground)",
+                      fontSize: "0.72rem",
+                      color: "var(--muted-foreground)",
+                      fontWeight: 500,
+                      background: "none",
+                      border: "none",
+                      padding: "2px 6px",
                       fontFamily: "'Vazirmatn', sans-serif",
+                      cursor: "pointer",
+                      textDecoration: "underline",
+                      textUnderlineOffset: 2,
                     }}
                   >
-                    تغییر رمز فعلی
-                  </button>
-                  <button
-                    onClick={() => { setPasswordMode("forgot"); setForgotError(""); setForgotStep("send"); }}
-                    className="flex-1 py-2 rounded-xl text-xs font-medium transition-all"
-                    style={{
-                      backgroundColor: passwordMode === "forgot" ? "var(--primary)" : "var(--muted)",
-                      color: passwordMode === "forgot" ? "white" : "var(--muted-foreground)",
-                      fontFamily: "'Vazirmatn', sans-serif",
-                    }}
-                  >
-                    فراموشی رمز
+                    {passwordMode === "change" ? "فراموشی رمز؟" : "تغییر با رمز فعلی"}
                   </button>
                 </div>
 
                 {passwordMode === "change" ? (
-                  <>
-                    <div className="flex flex-col gap-3">
-                      <div className="relative">
-                        <input
-                          type={showCurrent ? "text" : "password"}
-                          placeholder="رمز عبور فعلی"
-                          value={currentPassword}
-                          onChange={(e) => setCurrentPassword(e.target.value)}
-                          className="w-full px-4 py-2.5 rounded-xl outline-none"
-                          style={{
-                            backgroundColor: "var(--input-background)",
-                            color: "var(--foreground)",
-                            fontSize: "0.9rem",
-                            fontFamily: "'Vazirmatn', sans-serif",
-                            border: "1px solid var(--border)",
-                          }}
-                          dir="rtl"
-                        />
-                        <button
-                          onClick={() => setShowCurrent(!showCurrent)}
-                          className="absolute left-3 top-1/2 -translate-y-1/2"
-                          style={{ color: "var(--muted-foreground)" }}
-                        >
-                          {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
-                        </button>
-                      </div>
-
-                      <div className="relative">
-                        <input
-                          type={showNew ? "text" : "password"}
-                          placeholder="رمز عبور جدید"
-                          value={newPassword}
-                          onChange={(e) => setNewPassword(e.target.value)}
-                          className="w-full px-4 py-2.5 rounded-xl outline-none"
-                          style={{
-                            backgroundColor: "var(--input-background)",
-                            color: "var(--foreground)",
-                            fontSize: "0.9rem",
-                            fontFamily: "'Vazirmatn', sans-serif",
-                            border: "1px solid var(--border)",
-                          }}
-                          dir="rtl"
-                        />
-                        <button
-                          onClick={() => setShowNew(!showNew)}
-                          className="absolute left-3 top-1/2 -translate-y-1/2"
-                          style={{ color: "var(--muted-foreground)" }}
-                        >
-                          {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
-                        </button>
-                      </div>
-
-                      <div className="relative">
-                        <input
-                          type={showConfirm ? "text" : "password"}
-                          placeholder="تکرار رمز عبور جدید"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          className="w-full px-4 py-2.5 rounded-xl outline-none"
-                          style={{
-                            backgroundColor: "var(--input-background)",
-                            color: "var(--foreground)",
-                            fontSize: "0.9rem",
-                            fontFamily: "'Vazirmatn', sans-serif",
-                            border: "1px solid var(--border)",
-                          }}
-                          dir="rtl"
-                        />
-                        <button
-                          onClick={() => setShowConfirm(!showConfirm)}
-                          className="absolute left-3 top-1/2 -translate-y-1/2"
-                          style={{ color: "var(--muted-foreground)" }}
-                        >
-                          {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
-                        </button>
-                      </div>
+                  <div className="flex flex-col gap-2">
+                    <div className="relative">
+                      <input
+                        type={showCurrent ? "text" : "password"}
+                        placeholder="رمز عبور فعلی"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        className="w-full px-4 py-2 rounded-xl outline-none text-sm"
+                        style={{
+                          backgroundColor: "var(--input-background)",
+                          color: "var(--foreground)",
+                          fontFamily: "'Vazirmatn', sans-serif",
+                          border: "1px solid var(--border)",
+                        }}
+                        dir="rtl"
+                      />
+                      <button
+                        onClick={() => setShowCurrent(!showCurrent)}
+                        className="absolute left-3 top-1/2 -translate-y-1/2"
+                        style={{ color: "var(--muted-foreground)" }}
+                      >
+                        {showCurrent ? <EyeOff size={15} /> : <Eye size={15} />}
+                      </button>
                     </div>
-
+                    <div className="relative">
+                      <input
+                        type={showNew ? "text" : "password"}
+                        placeholder="رمز عبور جدید"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        className="w-full px-4 py-2 rounded-xl outline-none text-sm"
+                        style={{
+                          backgroundColor: "var(--input-background)",
+                          color: "var(--foreground)",
+                          fontFamily: "'Vazirmatn', sans-serif",
+                          border: "1px solid var(--border)",
+                        }}
+                        dir="rtl"
+                      />
+                      <button
+                        onClick={() => setShowNew(!showNew)}
+                        className="absolute left-3 top-1/2 -translate-y-1/2"
+                        style={{ color: "var(--muted-foreground)" }}
+                      >
+                        {showNew ? <EyeOff size={15} /> : <Eye size={15} />}
+                      </button>
+                    </div>
+                    <div className="relative">
+                      <input
+                        type={showConfirm ? "text" : "password"}
+                        placeholder="تکرار رمز عبور جدید"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="w-full px-4 py-2 rounded-xl outline-none text-sm"
+                        style={{
+                          backgroundColor: "var(--input-background)",
+                          color: "var(--foreground)",
+                          fontFamily: "'Vazirmatn', sans-serif",
+                          border: "1px solid var(--border)",
+                        }}
+                        dir="rtl"
+                      />
+                      <button
+                        onClick={() => setShowConfirm(!showConfirm)}
+                        className="absolute left-3 top-1/2 -translate-y-1/2"
+                        style={{ color: "var(--muted-foreground)" }}
+                      >
+                        {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
+                      </button>
+                    </div>
                     {passwordError && (
-                      <p style={{ fontSize: "0.75rem", color: "#C0392B", marginTop: 6 }}>{passwordError}</p>
+                      <p style={{ fontSize: "0.72rem", color: "#C0392B" }}>{passwordError}</p>
                     )}
-
+                    {passwordSaved && (
+                      <p style={{ fontSize: "0.72rem", color: "#27AE60" }}>رمز عبور تغییر کرد</p>
+                    )}
                     <button
                       onClick={handleChangePassword}
                       disabled={savingPassword}
-                      className="w-full py-2.5 rounded-xl text-white transition-all active:scale-95 flex items-center justify-center gap-2 mt-3"
+                      className="w-full py-2 rounded-xl transition-all active:scale-95 text-sm"
                       style={{
-                        backgroundColor: "var(--primary)",
-                        fontSize: "0.85rem",
-                        fontWeight: 600,
+                        border: "1px solid #C0392B",
+                        color: "#C0392B",
+                        backgroundColor: "transparent",
+                        fontWeight: 500,
                         fontFamily: "'Vazirmatn', sans-serif",
                         opacity: savingPassword ? 0.6 : 1,
                       }}
                     >
-                      {savingPassword ? (
-                        "در حال ذخیره..."
-                      ) : passwordSaved ? (
-                        <><Check size={16} /> رمز عبور تغییر کرد</>
-                      ) : (
-                        "تغییر رمز عبور"
-                      )}
+                      {savingPassword ? "در حال ذخیره..." : "تغییر رمز عبور"}
                     </button>
-                  </>
-                ) : (
-                  <>
-                    {forgotStep === "send" ? (
-                      <div>
-                        <div
-                          className="flex items-center gap-3 p-3 rounded-xl mb-3"
-                          style={{ backgroundColor: "var(--muted)" }}
-                        >
-                          <ShieldCheck size={16} color="var(--muted-foreground)" />
-                          <span style={{ fontSize: "0.82rem", color: "var(--muted-foreground)" }}>
-                            کد تأیید به شماره {user.phone} ارسال می‌شود
-                          </span>
-                        </div>
-                        {forgotError && (
-                          <p style={{ fontSize: "0.75rem", color: "#C0392B", marginBottom: 6 }}>{forgotError}</p>
-                        )}
-                        <button
-                          onClick={handleSendOtp}
-                          disabled={sendingOtp}
-                          className="w-full py-2.5 rounded-xl text-white transition-all active:scale-95 flex items-center justify-center gap-2"
-                          style={{
-                            backgroundColor: "var(--primary)",
-                            fontSize: "0.85rem",
-                            fontWeight: 600,
-                            fontFamily: "'Vazirmatn', sans-serif",
-                            opacity: sendingOtp ? 0.6 : 1,
-                          }}
-                        >
-                          {sendingOtp ? "در حال ارسال..." : "ارسال کد تأیید"}
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col gap-3">
-                        <input
-                          placeholder="کد تأیید"
-                          value={otpCode}
-                          onChange={(e) => setOtpCode(e.target.value)}
-                          className="w-full px-4 py-2.5 rounded-xl outline-none"
-                          style={{
-                            backgroundColor: "var(--input-background)",
-                            color: "var(--foreground)",
-                            fontSize: "0.9rem",
-                            fontFamily: "'Vazirmatn', sans-serif",
-                            border: "1px solid var(--border)",
-                          }}
-                          dir="rtl"
-                        />
-                        <div className="relative">
-                          <input
-                            type={showOtpNew ? "text" : "password"}
-                            placeholder="رمز عبور جدید"
-                            value={otpNewPassword}
-                            onChange={(e) => setOtpNewPassword(e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-xl outline-none"
-                            style={{
-                              backgroundColor: "var(--input-background)",
-                              color: "var(--foreground)",
-                              fontSize: "0.9rem",
-                              fontFamily: "'Vazirmatn', sans-serif",
-                              border: "1px solid var(--border)",
-                            }}
-                            dir="rtl"
-                          />
-                          <button
-                            onClick={() => setShowOtpNew(!showOtpNew)}
-                            className="absolute left-3 top-1/2 -translate-y-1/2"
-                            style={{ color: "var(--muted-foreground)" }}
-                          >
-                            {showOtpNew ? <EyeOff size={16} /> : <Eye size={16} />}
-                          </button>
-                        </div>
-                        <div className="relative">
-                          <input
-                            type={showOtpConfirm ? "text" : "password"}
-                            placeholder="تکرار رمز عبور جدید"
-                            value={otpConfirmPassword}
-                            onChange={(e) => setOtpConfirmPassword(e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-xl outline-none"
-                            style={{
-                              backgroundColor: "var(--input-background)",
-                              color: "var(--foreground)",
-                              fontSize: "0.9rem",
-                              fontFamily: "'Vazirmatn', sans-serif",
-                              border: "1px solid var(--border)",
-                            }}
-                            dir="rtl"
-                          />
-                          <button
-                            onClick={() => setShowOtpConfirm(!showOtpConfirm)}
-                            className="absolute left-3 top-1/2 -translate-y-1/2"
-                            style={{ color: "var(--muted-foreground)" }}
-                          >
-                            {showOtpConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
-                          </button>
-                        </div>
-
-                        {forgotError && (
-                          <p style={{ fontSize: "0.75rem", color: "#C0392B" }}>{forgotError}</p>
-                        )}
-
-                        <button
-                          onClick={handleForgotPassword}
-                          disabled={savingForgot}
-                          className="w-full py-2.5 rounded-xl text-white transition-all active:scale-95 flex items-center justify-center gap-2"
-                          style={{
-                            backgroundColor: "var(--primary)",
-                            fontSize: "0.85rem",
-                            fontWeight: 600,
-                            fontFamily: "'Vazirmatn', sans-serif",
-                            opacity: savingForgot ? 0.6 : 1,
-                          }}
-                        >
-                          {savingForgot ? (
-                            "در حال ذخیره..."
-                          ) : forgotSaved ? (
-                            <><Check size={16} /> رمز عبور تغییر کرد</>
-                          ) : (
-                            "تغییر رمز عبور"
-                          )}
-                        </button>
-                      </div>
+                  </div>
+                ) : forgotStep === "send" ? (
+                  <div>
+                    <div
+                      className="flex items-center gap-2 p-2.5 rounded-xl mb-2"
+                      style={{ backgroundColor: "var(--muted)" }}
+                    >
+                      <ShieldCheck size={14} color="var(--muted-foreground)" />
+                      <span style={{ fontSize: "0.78rem", color: "var(--muted-foreground)" }}>
+                        کد تأیید به شماره {user.phone} ارسال می‌شود
+                      </span>
+                    </div>
+                    {forgotError && (
+                      <p style={{ fontSize: "0.72rem", color: "#C0392B", marginBottom: 4 }}>{forgotError}</p>
                     )}
-                  </>
+                    <button
+                      onClick={handleSendOtp}
+                      disabled={sendingOtp}
+                      className="w-full py-2 rounded-xl transition-all active:scale-95 text-sm"
+                      style={{
+                        border: "1px solid #C0392B",
+                        color: "#C0392B",
+                        backgroundColor: "transparent",
+                        fontWeight: 500,
+                        fontFamily: "'Vazirmatn', sans-serif",
+                        opacity: sendingOtp ? 0.6 : 1,
+                      }}
+                    >
+                      {sendingOtp ? "در حال ارسال..." : "ارسال کد تأیید"}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <input
+                      placeholder="کد تأیید"
+                      value={otpCode}
+                      onChange={(e) => setOtpCode(e.target.value)}
+                      className="w-full px-4 py-2 rounded-xl outline-none text-sm"
+                      style={{
+                        backgroundColor: "var(--input-background)",
+                        color: "var(--foreground)",
+                        fontFamily: "'Vazirmatn', sans-serif",
+                        border: "1px solid var(--border)",
+                      }}
+                      dir="rtl"
+                    />
+                    <div className="relative">
+                      <input
+                        type={showOtpNew ? "text" : "password"}
+                        placeholder="رمز عبور جدید"
+                        value={otpNewPassword}
+                        onChange={(e) => setOtpNewPassword(e.target.value)}
+                        className="w-full px-4 py-2 rounded-xl outline-none text-sm"
+                        style={{
+                          backgroundColor: "var(--input-background)",
+                          color: "var(--foreground)",
+                          fontFamily: "'Vazirmatn', sans-serif",
+                          border: "1px solid var(--border)",
+                        }}
+                        dir="rtl"
+                      />
+                      <button
+                        onClick={() => setShowOtpNew(!showOtpNew)}
+                        className="absolute left-3 top-1/2 -translate-y-1/2"
+                        style={{ color: "var(--muted-foreground)" }}
+                      >
+                        {showOtpNew ? <EyeOff size={15} /> : <Eye size={15} />}
+                      </button>
+                    </div>
+                    <div className="relative">
+                      <input
+                        type={showOtpConfirm ? "text" : "password"}
+                        placeholder="تکرار رمز عبور جدید"
+                        value={otpConfirmPassword}
+                        onChange={(e) => setOtpConfirmPassword(e.target.value)}
+                        className="w-full px-4 py-2 rounded-xl outline-none text-sm"
+                        style={{
+                          backgroundColor: "var(--input-background)",
+                          color: "var(--foreground)",
+                          fontFamily: "'Vazirmatn', sans-serif",
+                          border: "1px solid var(--border)",
+                        }}
+                        dir="rtl"
+                      />
+                      <button
+                        onClick={() => setShowOtpConfirm(!showOtpConfirm)}
+                        className="absolute left-3 top-1/2 -translate-y-1/2"
+                        style={{ color: "var(--muted-foreground)" }}
+                      >
+                        {showOtpConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
+                      </button>
+                    </div>
+                    {forgotError && (
+                      <p style={{ fontSize: "0.72rem", color: "#C0392B" }}>{forgotError}</p>
+                    )}
+                    {forgotSaved && (
+                      <p style={{ fontSize: "0.72rem", color: "#27AE60" }}>رمز عبور تغییر کرد</p>
+                    )}
+                    <button
+                      onClick={handleForgotPassword}
+                      disabled={savingForgot}
+                      className="w-full py-2 rounded-xl transition-all active:scale-95 text-sm"
+                      style={{
+                        border: "1px solid #C0392B",
+                        color: "#C0392B",
+                        backgroundColor: "transparent",
+                        fontWeight: 500,
+                        fontFamily: "'Vazirmatn', sans-serif",
+                        opacity: savingForgot ? 0.6 : 1,
+                      }}
+                    >
+                      {savingForgot ? "در حال ذخیره..." : "تغییر رمز عبور"}
+                    </button>
+                  </div>
                 )}
               </div>
 
-              <div style={{ height: 1, backgroundColor: "var(--border)", marginTop: 6, marginBottom: 16 }} />
+              <div style={{ height: 1, backgroundColor: "var(--border)", marginBottom: 16 }} />
 
               {/* Delete Account */}
               <div>
-                <p style={{ fontSize: "0.85rem", fontWeight: 600, color: "#C0392B", marginBottom: 8 }}>
-                  حذف حساب کاربری
-                </p>
                 {!showDeleteConfirm ? (
                   <button
                     onClick={() => setShowDeleteConfirm(true)}
-                    className="w-full py-2.5 rounded-xl text-white transition-all active:scale-95 flex items-center justify-center gap-2"
+                    className="w-full py-2 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2 text-sm"
                     style={{
                       backgroundColor: "#C0392B",
-                      fontSize: "0.85rem",
-                      fontWeight: 600,
+                      color: "white",
+                      fontWeight: 500,
                       fontFamily: "'Vazirmatn', sans-serif",
                     }}
                   >
-                    <AlertTriangle size={16} />
+                    <AlertTriangle size={14} />
                     حذف حساب کاربری
                   </button>
                 ) : (
-                  <div
-                    className="rounded-xl p-4"
-                    style={{ backgroundColor: "#FDEDEC", border: "1px solid #C0392B" }}
-                  >
-                    <p style={{ fontSize: "0.82rem", color: "#C0392B", lineHeight: 1.7, marginBottom: 12 }}>
-                      آیا مطمئن هستید؟ تمام اطلاعات شما شامل پروفایل، چک‌لیست و اقدامات برای همیشه حذف خواهد شد.
+                  <div className="rounded-xl p-3" style={{ backgroundColor: "#FDEDEC", border: "1px solid #C0392B" }}>
+                    <p style={{ fontSize: "0.78rem", color: "#C0392B", lineHeight: 1.6, marginBottom: 10 }}>
+                      تمام اطلاعات شما برای همیشه حذف خواهد شد. این اقدام قابل بازگشت نیست.
                     </p>
                     {deleteError && (
-                      <p style={{ fontSize: "0.75rem", color: "#C0392B", marginBottom: 8 }}>{deleteError}</p>
+                      <p style={{ fontSize: "0.72rem", color: "#C0392B", marginBottom: 6 }}>{deleteError}</p>
                     )}
                     <div className="flex gap-2">
                       <button
                         onClick={handleDeleteAccount}
                         disabled={deleting}
-                        className="flex-1 py-2.5 rounded-xl text-white transition-all active:scale-95 flex items-center justify-center gap-2"
+                        className="flex-1 py-2 rounded-xl text-white text-sm transition-all active:scale-95"
                         style={{
                           backgroundColor: "#C0392B",
-                          fontSize: "0.82rem",
-                          fontWeight: 600,
+                          fontWeight: 500,
                           fontFamily: "'Vazirmatn', sans-serif",
                           opacity: deleting ? 0.6 : 1,
                         }}
@@ -563,12 +498,11 @@ export function SettingsModal({ isOpen, onClose, user, onUpdateUser, onLogout }:
                       <button
                         onClick={() => { setShowDeleteConfirm(false); setDeleteError(""); }}
                         disabled={deleting}
-                        className="flex-1 py-2.5 rounded-xl transition-all active:scale-95"
+                        className="flex-1 py-2 rounded-xl text-sm transition-all active:scale-95"
                         style={{
                           backgroundColor: "var(--muted)",
                           color: "var(--foreground)",
-                          fontSize: "0.82rem",
-                          fontWeight: 600,
+                          fontWeight: 500,
                           fontFamily: "'Vazirmatn', sans-serif",
                         }}
                       >
