@@ -5,6 +5,7 @@ import { UserProfile, diseaseOptions, toPersianNumber } from "./data";
 
 interface QuestionnaireProps {
   onComplete: (profile: UserProfile) => void;
+  onCancel: () => void;
   initialProfile?: UserProfile | null;
 }
 
@@ -16,7 +17,7 @@ const steps = [
   "مهارت‌ها",
 ];
 
-export function Questionnaire({ onComplete, initialProfile }: QuestionnaireProps) {
+export function Questionnaire({ onComplete, onCancel, initialProfile }: QuestionnaireProps) {
   const [step, setStep] = useState(0);
   const [profile, setProfile] = useState<UserProfile>(initialProfile || {
     familyCount: 2,
@@ -58,7 +59,7 @@ export function Questionnaire({ onComplete, initialProfile }: QuestionnaireProps
         style={{ backgroundColor: "var(--primary)" }}
       >
         <div className="flex items-center justify-between mb-4">
-          <button onClick={back} disabled={step === 0} className="opacity-80 disabled:opacity-0">
+          <button onClick={step === 0 ? onCancel : back} className="opacity-80">
             <ChevronRight size={24} color="white" />
           </button>
           <span style={{ color: "white", fontSize: "0.85rem", opacity: 0.8 }}>

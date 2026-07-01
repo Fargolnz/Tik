@@ -269,44 +269,8 @@ export default function App() {
     initialized.current = false;
   };
 
-  const handleRegenerate = async () => {
-    if (!profile) return;
-    setGenerating(true);
-    const cl = generateChecklist(profile);
-    const ac = generateActions(profile);
-    setChecklist(cl);
-    setActions(ac);
-
-    try {
-      await api.checklist.save(
-        cl.map((i) => ({
-          item_id: i.id,
-          title: i.title,
-          description: i.description || "",
-          category: i.category,
-          priority: i.priority,
-          quantity: i.quantity || "",
-          checked: i.checked ? 1 : 0,
-          customizable: i.customizable ? 1 : 0,
-        }))
-      );
-      await api.actions.save(
-        ac.map((a) => ({
-          action_id: a.id,
-          phase: a.phase,
-          title: a.title,
-          description: a.description,
-          priority: a.priority,
-          checked: a.checked ? 1 : 0,
-        }))
-      );
-    } catch (e) {
-      console.error("Failed to regenerate", e);
-    }
-
-    setTimeout(() => {
-      setGenerating(false);
-    }, 1000);
+  const handleRegenerate = () => {
+    setScreen("questionnaire");
   };
 
   const handleUpdateUser = async (fullName: string) => {
@@ -420,19 +384,6 @@ export default function App() {
               transition={{ duration: 0.3 }}
             >
               <AuthPage onAuthenticated={handleAuthenticated} />
-            </motion.div>
-          )}
-
-          {screen === "questionnaire" && !generating && user && (
-            <motion.div
-              key="questionnaire"
-              className="absolute inset-0"
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Questionnaire onComplete={handleProfileComplete} initialProfile={profile} />
             </motion.div>
           )}
 
@@ -626,6 +577,21 @@ export default function App() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Questionnaire screen — rendered outside AnimatePresence for reliable visibility */}
+        {screen === "questionnaire" && user && (
+          <motion.div
+            key="questionnaire"
+            className="absolute inset-0"
+            style={{ zIndex: 50 }}
+            initial={{ opacity: 0, x: 60 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Questionnaire onComplete={handleProfileComplete} onCancel={() => setScreen("main")} initialProfile={profile} />
+          </motion.div>
+        )}
 
         {/* Download modal for checklist/actions */}
         {profile && (
