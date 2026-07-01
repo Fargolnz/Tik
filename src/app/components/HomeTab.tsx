@@ -191,14 +191,14 @@ export function HomeTab({
               >
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center mb-3"
-                  style={{ backgroundColor: "#EBF5FB" }}
+                  style={{ backgroundColor: "#C0392B15" }}
                 >
-                  <ClipboardList size={20} color="#2980B9" />
+                  <ClipboardList size={20} color="#C0392B" />
                 </div>
                 <p
                   style={{ fontSize: "0.75rem", color: "var(--muted-foreground)" }}
                 >
-                  باقی‌مانده چک‌لیست
+                  موارد باقی‌مانده چک‌لیست
                 </p>
                 <p
                   style={{
@@ -220,9 +220,9 @@ export function HomeTab({
               >
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center mb-3"
-                  style={{ backgroundColor: "#EAFAF1" }}
+                  style={{ backgroundColor: "#2980B915" }}
                 >
-                  <Zap size={20} color="#27AE60" />
+                  <Zap size={20} color="#2980B9" />
                 </div>
                 <p
                   style={{ fontSize: "0.75rem", color: "var(--muted-foreground)" }}
@@ -233,7 +233,7 @@ export function HomeTab({
                   style={{
                     fontSize: "1.3rem",
                     fontWeight: 700,
-                    color: remainingActions > 0 ? "#E67E22" : "#27AE60",
+                    color: remainingActions > 0 ? "#2980B9" : "#27AE60",
                   }}
                 >
                   {toPersianNumber(remainingActions)}
@@ -308,7 +308,7 @@ export function HomeTab({
               >
                 <p>
                   {toPersianNumber(checklist.filter((i) => i.checked).length)} از{" "}
-                  {toPersianNumber(checklist.length)} آیتم چک‌لیست تهیه شده
+                  {toPersianNumber(checklist.length)} مورد چک‌لیست تهیه شده
                 </p>
                 <p>
                   {toPersianNumber(actions.filter((a) => a.checked).length)} از{" "}
