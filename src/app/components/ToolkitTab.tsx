@@ -224,48 +224,63 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
           <p style={{ fontSize: "0.85rem", color: "var(--muted-foreground)", marginBottom: 16, textAlign: "center" }}>
             فرمت و نوع فایل را انتخاب کنید
           </p>
-          <div className="flex flex-col gap-3">
-            <div className="flex gap-2">
-              <ExportBtn
-                icon={<FileText size={18} />}
-                label="چک‌لیست"
-                onClick={() => downloadTxt("checklist")}
-                color="#C0392B"
-              />
-              <ExportBtn
-                icon={<FileText size={18} />}
-                label="اقدامات"
-                onClick={() => downloadTxt("actions")}
-                color="#2980B9"
-              />
+          <div className="flex flex-col gap-4">
+            <div>
+              <p style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--muted-foreground)", marginBottom: 8, paddingRight: 2 }}>
+                📄 TXT
+              </p>
+              <div className="flex gap-2">
+                <ExportBtn
+                  icon={<FileText size={18} />}
+                  label="چک‌لیست"
+                  onClick={() => downloadTxt("checklist")}
+                  color="#C0392B"
+                />
+                <ExportBtn
+                  icon={<FileText size={18} />}
+                  label="اقدامات"
+                  onClick={() => downloadTxt("actions")}
+                  color="#2980B9"
+                />
+              </div>
             </div>
-            <div className="flex gap-2">
-              <ExportBtn
-                icon={<Globe size={18} />}
-                label="HTML چک‌لیست"
-                onClick={() => downloadHtml("checklist")}
-                color="#27AE60"
-              />
-              <ExportBtn
-                icon={<Globe size={18} />}
-                label="HTML اقدامات"
-                onClick={() => downloadHtml("actions")}
-                color="#8E44AD"
-              />
+            <div>
+              <p style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--muted-foreground)", marginBottom: 8, paddingRight: 2 }}>
+                📋 JSON
+              </p>
+              <div className="flex gap-2">
+                <ExportBtn
+                  icon={<FileText size={18} />}
+                  label="چک‌لیست"
+                  onClick={() => downloadJson("checklist")}
+                  color="#C0392B"
+                />
+                <ExportBtn
+                  icon={<FileText size={18} />}
+                  label="اقدامات"
+                  onClick={() => downloadJson("actions")}
+                  color="#2980B9"
+                />
+              </div>
             </div>
-            <div className="flex gap-2">
-              <ExportBtn
-                icon={<FileText size={18} />}
-                label="JSON چک‌لیست"
-                onClick={() => downloadJson("checklist")}
-                color="#E67E22"
-              />
-              <ExportBtn
-                icon={<FileText size={18} />}
-                label="JSON اقدامات"
-                onClick={() => downloadJson("actions")}
-                color="#2C3E50"
-              />
+            <div>
+              <p style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--muted-foreground)", marginBottom: 8, paddingRight: 2 }}>
+                🌐 HTML
+              </p>
+              <div className="flex gap-2">
+                <ExportBtn
+                  icon={<Globe size={18} />}
+                  label="چک‌لیست"
+                  onClick={() => downloadHtml("checklist")}
+                  color="#C0392B"
+                />
+                <ExportBtn
+                  icon={<Globe size={18} />}
+                  label="اقدامات"
+                  onClick={() => downloadHtml("actions")}
+                  color="#2980B9"
+                />
+              </div>
             </div>
           </div>
         </Modal>
