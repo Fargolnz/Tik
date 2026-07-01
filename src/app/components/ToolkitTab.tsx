@@ -2,8 +2,8 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import {
   Download,
-  FileText,
-  Globe,
+  ClipboardList,
+  Zap,
   BookOpen,
   Settings,
   Info,
@@ -232,16 +232,16 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
               </p>
               <div className="flex gap-2">
                 <ExportBtn
-                  icon={<FileText size={18} />}
+                  icon={<ClipboardList size={18} />}
                   label="چک‌لیست"
                   onClick={() => downloadTxt("checklist")}
                   color="#C0392B"
                 />
                 <ExportBtn
-                  icon={<FileText size={18} />}
+                  icon={<Zap size={18} />}
                   label="اقدامات"
                   onClick={() => downloadTxt("actions")}
-                  color="#2980B9"
+                  color="#C0392B"
                 />
               </div>
             </div>
@@ -251,16 +251,16 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
               </p>
               <div className="flex gap-2">
                 <ExportBtn
-                  icon={<FileText size={18} />}
+                  icon={<ClipboardList size={18} />}
                   label="چک‌لیست"
                   onClick={() => downloadJson("checklist")}
-                  color="#C0392B"
+                  color="#27AE60"
                 />
                 <ExportBtn
-                  icon={<FileText size={18} />}
+                  icon={<Zap size={18} />}
                   label="اقدامات"
                   onClick={() => downloadJson("actions")}
-                  color="#2980B9"
+                  color="#27AE60"
                 />
               </div>
             </div>
@@ -270,13 +270,13 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
               </p>
               <div className="flex gap-2">
                 <ExportBtn
-                  icon={<Globe size={18} />}
+                  icon={<ClipboardList size={18} />}
                   label="چک‌لیست"
                   onClick={() => downloadHtml("checklist")}
-                  color="#C0392B"
+                  color="#2980B9"
                 />
                 <ExportBtn
-                  icon={<Globe size={18} />}
+                  icon={<Zap size={18} />}
                   label="اقدامات"
                   onClick={() => downloadHtml("actions")}
                   color="#2980B9"
