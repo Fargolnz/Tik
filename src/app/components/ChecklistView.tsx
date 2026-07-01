@@ -74,11 +74,16 @@ export function ChecklistView({ items, onUpdate, onDownload }: ChecklistViewProp
   };
 
   const saveEdit = (id: string) => {
+    if (!editValue.trim()) return;
     onUpdate(
       items.map((i) =>
         i.id === id ? { ...i, title: editValue, quantity: editQty || undefined } : i
       )
     );
+    setEditingId(null);
+  };
+
+  const cancelEdit = () => {
     setEditingId(null);
   };
 
@@ -118,7 +123,7 @@ export function ChecklistView({ items, onUpdate, onDownload }: ChecklistViewProp
       <div style={{ backgroundColor: "var(--primary)" }} className="px-5 pt-8 pb-5">
         <div className="flex items-center justify-between mb-3">
           <h1 style={{ color: "white", fontSize: "1.25rem", fontWeight: 700 }}>
-            چک‌لیست اضطراری شما
+            چک‌لیست اضطراری
           </h1>
           <button
             onClick={onDownload}
@@ -235,6 +240,7 @@ export function ChecklistView({ items, onUpdate, onDownload }: ChecklistViewProp
                         onToggle={() => toggle(item.id)}
                         onStartEdit={() => startEdit(item)}
                         onSaveEdit={() => saveEdit(item.id)}
+                        onCancelEdit={cancelEdit}
                         onDelete={() => deleteItem(item.id)}
                       />
                     ))}
@@ -369,6 +375,7 @@ function ChecklistItemRow({
   onToggle,
   onStartEdit,
   onSaveEdit,
+  onCancelEdit,
   onDelete,
 }: {
   item: ChecklistItem;
@@ -380,131 +387,159 @@ function ChecklistItemRow({
   onToggle: () => void;
   onStartEdit: () => void;
   onSaveEdit: () => void;
+  onCancelEdit: () => void;
   onDelete: () => void;
 }) {
   return (
     <motion.div
       layout
-      className="flex items-start gap-3 px-5 py-3.5"
+      className="flex flex-col"
       style={{ borderBottom: "1px solid var(--border)", backgroundColor: "var(--card)" }}
     >
-      {/* Checkbox */}
-      <button
-        onClick={onToggle}
-        className="w-6 h-6 rounded-lg border-2 flex items-center justify-center mt-0.5 flex-shrink-0 transition-all active:scale-90"
-        style={{
-          backgroundColor: item.checked ? "#27AE60" : "transparent",
-          borderColor: item.checked ? "#27AE60" : "var(--border)",
-        }}
-      >
-        {item.checked && <Check size={13} color="white" strokeWidth={3} />}
-      </button>
+      {/* Main row */}
+      <div className="flex items-start gap-3 px-5 py-3.5">
+        {/* Checkbox */}
+        <button
+          onClick={onToggle}
+          className="w-6 h-6 rounded-lg border-2 flex items-center justify-center mt-0.5 flex-shrink-0 transition-all active:scale-90"
+          style={{
+            backgroundColor: item.checked ? "#27AE60" : "transparent",
+            borderColor: item.checked ? "#27AE60" : "var(--border)",
+          }}
+        >
+          {item.checked && <Check size={13} color="white" strokeWidth={3} />}
+        </button>
 
-      {/* Content */}
-      <div className="flex-1 min-w-0">
-        {isEditing ? (
-          <div className="flex flex-col gap-1.5">
-            <input
-              value={editValue}
-              onChange={(e) => onEditValueChange(e.target.value)}
-              className="w-full p-2 rounded-lg outline-none"
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <p
               style={{
-                backgroundColor: "var(--input-background)",
-                color: "var(--foreground)",
                 fontSize: "0.9rem",
-                fontFamily: "'Vazirmatn', sans-serif",
-                border: "1px solid var(--border)",
-              }}
-              dir="rtl"
-            />
-            <input
-              value={editQty}
-              onChange={(e) => onEditQtyChange(e.target.value)}
-              placeholder="مقدار"
-              className="w-full p-2 rounded-lg outline-none"
-              style={{
-                backgroundColor: "var(--input-background)",
-                color: "var(--foreground)",
-                fontSize: "0.8rem",
-                fontFamily: "'Vazirmatn', sans-serif",
-                border: "1px solid var(--border)",
-              }}
-              dir="rtl"
-            />
-            <button
-              onClick={onSaveEdit}
-              className="py-1.5 rounded-lg text-white"
-              style={{
-                backgroundColor: "var(--primary)",
-                fontSize: "0.8rem",
-                fontFamily: "'Vazirmatn', sans-serif",
+                fontWeight: 500,
+                color: item.checked ? "var(--muted-foreground)" : "var(--foreground)",
+                textDecoration: item.checked ? "line-through" : "none",
               }}
             >
-              ذخیره
-            </button>
+              {item.title}
+            </p>
+            <span
+              className="px-1.5 py-0.5 rounded-full"
+              style={{
+                backgroundColor: `${priorityColors[item.priority]}15`,
+                color: priorityColors[item.priority],
+                fontSize: "0.68rem",
+                fontWeight: 700,
+              }}
+            >
+              {priorityLabels[item.priority]}
+            </span>
           </div>
-        ) : (
-          <>
-            <div className="flex items-center gap-2 flex-wrap">
-              <p
-                style={{
-                  fontSize: "0.9rem",
-                  fontWeight: 500,
-                  color: item.checked ? "var(--muted-foreground)" : "var(--foreground)",
-                  textDecoration: item.checked ? "line-through" : "none",
-                }}
-              >
-                {item.title}
-                </p>
-                <span
-                  className="px-1.5 py-0.5 rounded-full"
-                  style={{
-                    backgroundColor: `${priorityColors[item.priority]}15`,
-                    color: priorityColors[item.priority],
-                    fontSize: "0.68rem",
-                    fontWeight: 700,
-                  }}
-                >
-                  {priorityLabels[item.priority]}
-                </span>
-            </div>
-            <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-              {item.quantity && (
-                <span style={{ fontSize: "0.75rem", color: "var(--muted-foreground)" }}>
-                  {item.quantity}
-                </span>
-              )}
-            </div>
-            {item.description && (
-              <p style={{ fontSize: "0.75rem", color: "var(--muted-foreground)", marginTop: 2 }}>
-                {item.description}
-              </p>
+          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+            {item.quantity && (
+              <span style={{ fontSize: "0.75rem", color: "var(--muted-foreground)" }}>
+                {item.quantity}
+              </span>
             )}
-          </>
-        )}
-      </div>
-
-      {/* Actions */}
-      {!isEditing && (
-        <div className="flex gap-1 flex-shrink-0">
-          {item.customizable && (
-            <button
-              onClick={onStartEdit}
-              className="w-7 h-7 rounded-lg flex items-center justify-center"
-              style={{ backgroundColor: "var(--muted)" }}
-            >
-              <Edit2 size={13} color="var(--muted-foreground)" />
-            </button>
+          </div>
+          {item.description && (
+            <p style={{ fontSize: "0.75rem", color: "var(--muted-foreground)", marginTop: 2 }}>
+              {item.description}
+            </p>
           )}
+        </div>
+
+        {/* Actions */}
+        <div className="flex gap-1 flex-shrink-0">
+          <button
+            onClick={onStartEdit}
+            className="w-7 h-7 rounded-lg flex items-center justify-center transition-all active:scale-90"
+            style={{ backgroundColor: "var(--muted)" }}
+          >
+            <Edit2 size={13} color="var(--muted-foreground)" />
+          </button>
           <button
             onClick={onDelete}
-            className="w-7 h-7 rounded-lg flex items-center justify-center"
+            className="w-7 h-7 rounded-lg flex items-center justify-center transition-all active:scale-90"
             style={{ backgroundColor: "#FFEBEE" }}
           >
             <Trash2 size={13} color="#C0392B" />
           </button>
         </div>
-      )}
+      </div>
+
+      {/* Edit panel */}
+      <AnimatePresence initial={false}>
+        {isEditing && (
+          <motion.div
+            key="edit"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="overflow-hidden"
+            style={{ borderTop: "1px solid var(--border)" }}
+          >
+            <div className="px-5 pb-3.5 pt-2 flex flex-col gap-2">
+              <input
+                value={editValue}
+                onChange={(e) => onEditValueChange(e.target.value)}
+                placeholder="نام آیتم"
+                className="w-full px-4 py-2.5 rounded-xl outline-none"
+                style={{
+                  backgroundColor: "var(--input-background)",
+                  color: "var(--foreground)",
+                  fontSize: "0.9rem",
+                  fontFamily: "'Vazirmatn', sans-serif",
+                  border: "1px solid var(--border)",
+                }}
+                dir="rtl"
+              />
+              <input
+                value={editQty}
+                onChange={(e) => onEditQtyChange(e.target.value)}
+                placeholder="مقدار مورد نیاز (اختیاری)"
+                className="w-full px-4 py-2.5 rounded-xl outline-none"
+                style={{
+                  backgroundColor: "var(--input-background)",
+                  color: "var(--foreground)",
+                  fontSize: "0.9rem",
+                  fontFamily: "'Vazirmatn', sans-serif",
+                  border: "1px solid var(--border)",
+                }}
+                dir="rtl"
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={onSaveEdit}
+                  className="flex-1 py-2 rounded-xl text-white transition-all active:scale-95"
+                  style={{
+                    backgroundColor: "var(--primary)",
+                    fontSize: "0.9rem",
+                    fontWeight: 600,
+                    fontFamily: "'Vazirmatn', sans-serif",
+                  }}
+                >
+                  ذخیره
+                </button>
+                <button
+                  onClick={onCancelEdit}
+                  className="flex-1 py-2 rounded-xl transition-all active:scale-95"
+                  style={{
+                    backgroundColor: "var(--muted)",
+                    color: "var(--foreground)",
+                    fontSize: "0.9rem",
+                    fontWeight: 600,
+                    fontFamily: "'Vazirmatn', sans-serif",
+                  }}
+                >
+                  انصراف
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
