@@ -13,6 +13,9 @@ import {
   ChevronLeft,
   X,
   Wrench,
+  Globe,
+  FileText,
+  FileSpreadsheet,
 } from "lucide-react";
 import { ChecklistItem, ActionItem, UserProfile } from "./data";
 
@@ -125,39 +128,32 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
 
   const toolItems = [
     {
-      icon: <Settings size={20} color="#7A7A8C" />,
+      icon: <Settings size={20} color="#1E3A5F" />,
       title: "تنظیمات",
       desc: "مدیریت حساب کاربری",
-      bg: "#7A7A8C20",
+      bg: "#EBF0F5",
       onClick: onOpenSettings,
     },
     {
-      icon: <Download size={20} color="#E91E63" />,
-      title: "دانلودها",
+      icon: <Download size={20} color="#C0392B" />,
+      title: "دانلود",
       desc: "خروجی گرفتن از چک‌لیست و اقدامات",
-      bg: "#FCE4EC",
+      bg: "#FDEDEC",
       onClick: () => setShowExport(true),
     },
     {
-      icon: <BookOpen size={20} color="#2980B9" />,
+      icon: <BookOpen size={20} color="#C0392B" />,
       title: "راهنمای اضطراری",
       desc: "نکات مهم در شرایط بحرانی",
-      bg: "#EBF5FB",
+      bg: "#FDEDEC",
       onClick: () => setShowGuide(true),
     },
     {
-      icon: <Mail size={20} color="#8E44AD" />,
+      icon: <Mail size={20} color="#C0392B" />,
       title: "ارتباط با ما",
       desc: "پیشنهادات و انتقادات",
-      bg: "#F4ECF7",
+      bg: "#FDEDEC",
       onClick: () => setShowContact(true),
-    },
-    {
-      icon: <Shield size={20} color="#E67E22" />,
-      title: "حریم خصوصی",
-      desc: "سیاست حفظ اطلاعات",
-      bg: "#FEF5E7",
-      onClick: () => setShowPrivacy(true),
     },
     {
       icon: <Info size={20} color="#C0392B" />,
@@ -165,6 +161,13 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
       desc: "نسخه ۲.۰.۰",
       bg: "#FDEDEC",
       onClick: () => setShowAbout(true),
+    },
+    {
+      icon: <Shield size={20} color="#1E3A5F" />,
+      title: "حریم خصوصی",
+      desc: "سیاست حفظ اطلاعات",
+      bg: "#EBF0F5",
+      onClick: () => setShowPrivacy(true),
     },
   ];
 
@@ -236,9 +239,12 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
           </p>
           <div className="flex flex-col gap-4">
             <div>
-              <p style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--muted-foreground)", marginBottom: 8, paddingRight: 2 }}>
-                📄 TXT
-              </p>
+              <div className="flex items-center gap-1.5 mb-2 pr-1">
+                <FileText size={16} color="#C0392B" />
+                <p style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--muted-foreground)", paddingTop: 1 }}>
+                  TXT
+                </p>
+              </div>
               <div className="flex gap-2">
                 <ExportBtn
                   icon={<ClipboardList size={18} />}
@@ -255,9 +261,12 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
               </div>
             </div>
             <div>
-              <p style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--muted-foreground)", marginBottom: 8, paddingRight: 2 }}>
-                📋 JSON
-              </p>
+              <div className="flex items-center gap-1.5 mb-2 pr-1">
+                <FileSpreadsheet size={16} color="#27AE60" />
+                <p style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--muted-foreground)", paddingTop: 2 }}>
+                  JSON
+                </p>
+              </div>
               <div className="flex gap-2">
                 <ExportBtn
                   icon={<ClipboardList size={18} />}
@@ -274,9 +283,12 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
               </div>
             </div>
             <div>
-              <p style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--muted-foreground)", marginBottom: 8, paddingRight: 2 }}>
-                🌐 HTML
-              </p>
+              <div className="flex items-center gap-1.5 mb-2 pr-1">
+                <Globe size={16} color="#2980B9" />
+                <p style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--muted-foreground)", paddingTop: 2 }}>
+                  HTML
+                </p>
+              </div>
               <div className="flex gap-2">
                 <ExportBtn
                   icon={<ClipboardList size={18} />}
@@ -300,8 +312,8 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
       {showGuide && (
         <Modal onClose={() => setShowGuide(false)} title="راهنمای اضطراری">
           <div className="flex flex-col gap-4" style={{ fontSize: "0.85rem", color: "var(--foreground)", lineHeight: 1.8 }}>
-            <div className="p-3 rounded-xl" style={{ backgroundColor: "#FFF3E0", border: "1px solid #FFB74D" }}>
-              <p style={{ fontWeight: 700, color: "#E65100", marginBottom: 4 }}>📞 شماره‌های اضطراری</p>
+            <div className="p-3 rounded-xl" style={{ backgroundColor: "#FDEDEC", border: "1px solid #ff9084" }}>
+              <p style={{ fontWeight: 700, color: "#C0392B", marginBottom: 4 }}>📞 شماره‌های اضطراری</p>
               <p>۱۱۵ - اورژانس</p>
               <p>۱۲۵ - آتش‌نشانی</p>
               <p>۱۱۰ - پلیس</p>
@@ -309,7 +321,7 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
             </div>
             <div className="p-3 rounded-xl" style={{ backgroundColor: "#EBF5FB", border: "1px solid #85C1E9" }}>
               <p style={{ fontWeight: 700, color: "#1A5276", marginBottom: 4 }}>🎒 کیف اضطراری (۷۲ ساعت)</p>
-              <p>محتويات کیف را در یک کوله‌پشتی کوچک و قابل حمل قرار دهید و در دسترس نگه دارید. شامل آب، غذای کنسروی، چراغ‌قوه، باتری، رادیو، جعبه کمک‌های اولیه، داروهای ضروری، مدارک مهم، پول نقد و پاوربانک.</p>
+              <p>محتويات کیف را در یک کوله‌پشتی کوچک و قابل حمل قرار دهید و در دسترس نگه دارید؛ شامل آب، غذای کنسروی، چراغ‌قوه، باتری، رادیو، جعبه کمک‌های اولیه، داروهای ضروری، مدارک مهم، پول نقد و پاوربانک.</p>
             </div>
             <div className="p-3 rounded-xl" style={{ backgroundColor: "#EAFAF1", border: "1px solid #82E0AA" }}>
               <p style={{ fontWeight: 700, color: "#1E8449", marginBottom: 4 }}>📍 نقطه تجمع خانواده</p>
@@ -334,6 +346,9 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
             <p style={{ fontSize: "0.78rem", color: "var(--muted-foreground)", marginTop: 8, lineHeight: 1.7 }}>
               با تکمیل پرسشنامه خانواده، چک‌لیست و برنامه اقدام شخصی‌سازی‌شده دریافت کنید.
             </p>
+            <p style={{ fontSize: "0.75rem", color: "var(--muted-foreground)", textAlign: "center", marginTop: 15, paddingTop: 12, borderTop: "1px solid var(--border)" }}>
+              آخرین به‌روزرسانی: تیر ۱۴۰۵
+            </p>
           </div>
         </Modal>
       )}
@@ -342,16 +357,50 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
       {showContact && (
         <Modal onClose={() => setShowContact(false)} title="ارتباط با ما">
           <div className="flex flex-col gap-4">
-            <p style={{ fontSize: "0.85rem", color: "var(--muted-foreground)", lineHeight: 1.7 }}>
-              برای ارسال پیشنهادات، انتقادات یا گزارش مشکلات می‌توانید از راه‌های زیر با ما در ارتباط باشید:
-            </p>
-            <div className="p-4 rounded-xl" style={{ backgroundColor: "var(--muted)" }}>
-              <p style={{ fontSize: "0.85rem", color: "var(--foreground)", fontWeight: 600 }}>📧 ایمیل</p>
-              <p style={{ fontSize: "0.8rem", color: "var(--muted-foreground)", direction: "ltr", textAlign: "right" }}>support@tik-app.ir</p>
+            <div className="flex flex-col items-center py-2">
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center mb-3"
+                style={{ backgroundColor: "#FDEDEC" }}
+              >
+                <Mail size={26} color="#C0392B" />
+              </div>
+              <p style={{ fontSize: "0.82rem", color: "var(--muted-foreground)", lineHeight: 1.7, textAlign: "center" }}>
+                برای ارسال پیشنهادات، انتقادات یا گزارش مشکلات می‌توانید از راه‌های زیر با ما در ارتباط باشید:
+              </p>
             </div>
-            <div className="p-4 rounded-xl" style={{ backgroundColor: "var(--muted)" }}>
-              <p style={{ fontSize: "0.85rem", color: "var(--foreground)", fontWeight: 600 }}>🌐 وبسایت</p>
-              <p style={{ fontSize: "0.8rem", color: "var(--muted-foreground)", direction: "ltr", textAlign: "right" }}>https://tik-app.ir</p>
+            <div
+              className="p-4 rounded-2xl flex items-center gap-4 transition-all active:scale-[0.98]"
+              style={{ backgroundColor: "#FDEDEC" }}
+            >
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{ backgroundColor: "#C0392B" }}
+              >
+                <Mail size={18} color="white" />
+              </div>
+              <div>
+                <p style={{ fontSize: "0.82rem", color: "#7B241C", fontWeight: 600 }}>ایمیل</p>
+                <p style={{ fontSize: "0.8rem", color: "#922B21", direction: "ltr", textAlign: "right", marginTop: 2 }}>
+                  support@tik-app.ir
+                </p>
+              </div>
+            </div>
+            <div
+              className="p-4 rounded-2xl flex items-center gap-4 transition-all active:scale-[0.98]"
+              style={{ backgroundColor: "#FDEDEC" }}
+            >
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{ backgroundColor: "#C0392B" }}
+              >
+              <Globe size={18} color="white" />
+              </div>
+              <div>
+                <p style={{ fontSize: "0.82rem", color: "#7B241C", fontWeight: 600 }}>وبسایت</p>
+                <p style={{ fontSize: "0.8rem", color: "#922B21", direction: "ltr", textAlign: "right", marginTop: 2 }}>
+                  https://tik-app.ir
+                </p>
+              </div>
             </div>
           </div>
         </Modal>
