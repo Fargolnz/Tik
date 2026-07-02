@@ -264,7 +264,7 @@ Tik/
 Tik follows a modern full-stack architecture that separates the presentation layer, business logic, and data storage. This modular design improves maintainability, scalability, and makes future feature development significantly easier.
 
 <div align="center">
-
+  <pre>
     User
     │
     ▼
@@ -287,7 +287,7 @@ Tik follows a modern full-stack architecture that separates the presentation lay
     │  Users • Profiles • Checklists │
     │    Actions • Emergency Data    │
     └────────────────────────────────┘
-
+  </pre>
 </div>
 
 ### Architecture Highlights
@@ -549,18 +549,7 @@ The main objective of Tik is to improve family preparedness by:
 
 ## 🎓 Academic Project
 
-This project is being developed as part of a IT Project Management course.
-
-The project follows an iterative development process where new features are continuously planned, implemented, tested, and evaluated.
-
-Current development focuses on:
-
-- Full-stack architecture
-- Authentication
-- Database integration
-- REST API development
-- User profile management
-- Scalable system architecture
+This project is developed as part of IT Project Management course.
 
 ---
 
