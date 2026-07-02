@@ -95,7 +95,7 @@ export function ProfileTab({
                     {user.full_name}
                   </p>
                   <p style={{ fontSize: "0.8rem", color: "var(--muted-foreground)", direction: "ltr", textAlign: "right" }}>
-                    {user.phone}
+                    {toPersianNumber(user.phone)}
                   </p>
                 </div>
                 <button

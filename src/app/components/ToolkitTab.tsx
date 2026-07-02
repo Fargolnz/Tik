@@ -241,9 +241,9 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
             <div>
               <div className="flex items-center gap-1.5 mb-2 pr-1">
                 <FileText size={16} color="#C0392B" />
-                <p style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--muted-foreground)", paddingTop: 1 }}>
+                <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--muted-foreground)", lineHeight: 1 }}>
                   TXT
-                </p>
+                </span>
               </div>
               <div className="flex gap-2">
                 <ExportBtn
@@ -263,9 +263,9 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
             <div>
               <div className="flex items-center gap-1.5 mb-2 pr-1">
                 <FileSpreadsheet size={16} color="#27AE60" />
-                <p style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--muted-foreground)", paddingTop: 2 }}>
+                <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--muted-foreground)", lineHeight: 1 }}>
                   JSON
-                </p>
+                </span>
               </div>
               <div className="flex gap-2">
                 <ExportBtn
@@ -285,9 +285,9 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
             <div>
               <div className="flex items-center gap-1.5 mb-2 pr-1">
                 <Globe size={16} color="#2980B9" />
-                <p style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--muted-foreground)", paddingTop: 2 }}>
+                <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--muted-foreground)", lineHeight: 1 }}>
                   HTML
-                </p>
+                </span>
               </div>
               <div className="flex gap-2">
                 <ExportBtn

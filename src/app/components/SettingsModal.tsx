@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { AlertTriangle, Check, Eye, EyeOff, ShieldCheck, X } from "lucide-react";
 import { UserData, api } from "../api";
+import { toPersianNumber } from "./data";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -347,7 +348,7 @@ export function SettingsModal({ isOpen, onClose, user, onUpdateUser, onLogout }:
                     >
                       <ShieldCheck size={14} color="var(--muted-foreground)" />
                       <span style={{ fontSize: "0.78rem", color: "var(--muted-foreground)" }}>
-                        کد تأیید به شماره {user.phone} ارسال می‌شود
+                        کد تأیید به شماره {toPersianNumber(user.phone)} ارسال می‌شود
                       </span>
                     </div>
                     {forgotError && (

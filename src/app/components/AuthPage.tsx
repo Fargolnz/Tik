@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ShieldCheck, Phone, Lock, User, ArrowLeft, Mail, Eye, EyeOff } from "lucide-react";
 import { api, setToken } from "../api";
+import { toPersianNumber } from "./data";
 
 type AuthMode = "login" | "register" | "forgot";
 
@@ -599,7 +600,7 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
                       کد تأیید
                     </label>
                     <p style={{ fontSize: "0.78rem", color: "var(--muted-foreground)" }}>
-                      کد ۶ رقمی به شماره {regPhone} ارسال شد
+                      کد ۶ رقمی به شماره {toPersianNumber(regPhone)} ارسال شد
                     </p>
                     <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ backgroundColor: "var(--input-background)" }}>
                       <Lock size={18} color="var(--muted-foreground)" />
