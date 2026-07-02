@@ -54,6 +54,11 @@ export function toPersianNumber(num: number | string): string {
   return str.replace(/\d/g, (digit) => persianDigits[parseInt(digit)]);
 }
 
+export function toEnglishNumber(str: string): string {
+  const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+  return str.replace(/[۰-۹]/g, (digit) => String(persianDigits.indexOf(digit)));
+}
+
 export function generateChecklist(profile: UserProfile): ChecklistItem[] {
   const items: ChecklistItem[] = [];
 

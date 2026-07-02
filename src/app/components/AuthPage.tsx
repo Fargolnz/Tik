@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ShieldCheck, Phone, Lock, User, ArrowLeft, Mail, Eye, EyeOff } from "lucide-react";
 import { api, setToken } from "../api";
-import { toPersianNumber } from "./data";
+import { toPersianNumber, toEnglishNumber } from "./data";
 
 type AuthMode = "login" | "register" | "forgot";
 
@@ -350,9 +350,9 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
                   <input
                     type="tel"
                     dir="ltr"
-                    placeholder="09123456789"
-                    value={loginPhone}
-                    onChange={(e) => setLoginPhone(e.target.value)}
+                    placeholder="۰۹۱۲۳۴۵۶۷۸۹"
+                    value={toPersianNumber(loginPhone)}
+                    onChange={(e) => setLoginPhone(toEnglishNumber(e.target.value))}
                     className="flex-1 bg-transparent outline-none"
                     style={{
                       color: "var(--foreground)",
@@ -573,7 +573,7 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
                     </label>
                     <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ backgroundColor: "var(--input-background)" }}>
                       <Phone size={18} color="var(--muted-foreground)" />
-                      <input type="tel" dir="ltr" placeholder="09123456789" value={regPhone} onChange={(e) => setRegPhone(e.target.value)} className="flex-1 bg-transparent outline-none" style={{ color: "var(--foreground)", fontSize: "0.9rem", fontFamily: "'Vazirmatn', sans-serif" }} />
+                      <input type="tel" dir="ltr" placeholder="۰۹۱۲۳۴۵۶۷۸۹" value={toPersianNumber(regPhone)} onChange={(e) => setRegPhone(toEnglishNumber(e.target.value))} className="flex-1 bg-transparent outline-none" style={{ color: "var(--foreground)", fontSize: "0.9rem", fontFamily: "'Vazirmatn', sans-serif" }} />
                     </div>
                   </div>
 
@@ -714,9 +714,9 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
                       <input
                         type="tel"
                         dir="ltr"
-                        placeholder="09123456789"
-                        value={forgotPhone}
-                        onChange={(e) => setForgotPhone(e.target.value)}
+                        placeholder="۰۹۱۲۳۴۵۶۷۸۹"
+                        value={toPersianNumber(forgotPhone)}
+                        onChange={(e) => setForgotPhone(toEnglishNumber(e.target.value))}
                         className="flex-1 bg-transparent outline-none"
                         style={{
                           color: "var(--foreground)",
