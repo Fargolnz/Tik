@@ -60,7 +60,7 @@ export default function App() {
           return Promise.all([api.profile.get(), api.checklist.get(), api.actions.get()]);
         })
         .then(([profileRes, checklistRes, actionsRes]) => {
-          if (profileRes.profile) {
+          if (profileRes.profile && profileRes.profile.livingType) {
             const p = profileRes.profile;
             setProfile({
               familyCount: p.familyCount,
@@ -123,7 +123,7 @@ export default function App() {
         return Promise.all([api.profile.get(), api.checklist.get(), api.actions.get()]);
       })
       .then(([profileRes, checklistRes, actionsRes]) => {
-        if (profileRes.profile) {
+        if (profileRes.profile && profileRes.profile.livingType) {
           const p = profileRes.profile;
           setProfile({
             familyCount: p.familyCount,

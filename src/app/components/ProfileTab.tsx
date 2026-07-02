@@ -13,6 +13,7 @@ import {
   Settings,
   Edit3,
   ChevronLeft,
+  ClipboardList,
 } from "lucide-react";
 import { UserData } from "../api";
 import { UserProfile, diseaseOptions, toPersianNumber } from "./data";
@@ -114,7 +115,7 @@ export function ProfileTab({
             style={{ backgroundColor: "var(--muted)" }}
           >
             <Calendar size={14} color="var(--muted-foreground)" />
-            <span style={{ fontSize: "0.78rem", color: "var(--muted-foreground)" }}>
+            <span style={{ fontSize: "0.78rem", color: "var(--muted-foreground)", paddingTop: 1 }}>
               عضویت از {new Date(user.created_at).toLocaleDateString("fa-IR")}
             </span>
           </div>
@@ -146,39 +147,24 @@ export function ProfileTab({
             )}
           </div>
 
-          {!profile ? (
-            <div className="text-center py-4">
-              <p style={{ fontSize: "0.85rem", color: "var(--muted-foreground)" }}>
-                پرسشنامه خانواده تکمیل نشده
-              </p>
-              <button
-                onClick={onNavigateToQuestionnaire}
-                className="mt-3 px-5 py-2.5 rounded-xl text-white text-sm"
-                style={{ backgroundColor: "var(--primary)" }}
-              >
-                تکمیل پرسشنامه
-              </button>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-2">
-              <Row icon={<Users size={15} />} label="تعداد اعضای خانواده" value={`${toPersianNumber(profile.familyCount)} نفر`} />
-              <Row icon={<Baby size={15} />} label="کودکان" value={profile.hasChild ? `${toPersianNumber(profile.childCount)} نفر` : "ندارد"} />
-              <Row icon={<Heart size={15} />} label="سالمندان" value={profile.hasElderly ? `${toPersianNumber(profile.elderlyCount)} نفر` : "ندارد"} />
-              <Row icon={<Dog size={15} />} label="حیوان خانگی" value={profile.hasPet ? `${toPersianNumber(profile.petCount)} عدد` : "ندارد"} />
-              <Row icon={<Home size={15} />} label="نوع مسکن" value={getLivingTypeLabel(profile.livingType)} />
-              {profile.hasDisease && profile.diseases.length > 0 && (
-                <div className="flex items-start gap-3 py-1.5">
-                  <Heart size={15} color="var(--muted-foreground)" style={{ marginTop: 2, flexShrink: 0 }} />
-                  <div>
-                    <span style={{ fontSize: "0.78rem", color: "var(--muted-foreground)" }}>بیماری‌ها: </span>
-                    <span style={{ fontSize: "0.78rem", color: "var(--foreground)" }}>
-                      {profile.diseases.map((id) => diseaseOptions.find((d) => d.id === id)?.label).filter(Boolean).join("، ")}
-                    </span>
-                  </div>
+          <div className="flex flex-col gap-2">
+            <Row icon={<Users size={15} />} label="تعداد اعضای خانواده" value={profile ? `${toPersianNumber(profile.familyCount)} نفر` : "ثبت نشده"} />
+            <Row icon={<Baby size={15} />} label="کودکان" value={profile ? (profile.hasChild ? `${toPersianNumber(profile.childCount)} نفر` : "ندارد") : "ثبت نشده"} />
+            <Row icon={<Heart size={15} />} label="سالمندان" value={profile ? (profile.hasElderly ? `${toPersianNumber(profile.elderlyCount)} نفر` : "ندارد") : "ثبت نشده"} />
+            <Row icon={<Dog size={15} />} label="حیوان خانگی" value={profile ? (profile.hasPet ? `${toPersianNumber(profile.petCount)} عدد` : "ندارد") : "ثبت نشده"} />
+            <Row icon={<Home size={15} />} label="نوع مسکن" value={profile ? getLivingTypeLabel(profile.livingType) : "ثبت نشده"} />
+            {profile && profile.hasDisease && profile.diseases.length > 0 && (
+              <div className="flex items-start gap-3 py-1.5">
+                <Heart size={15} color="var(--muted-foreground)" style={{ marginTop: 2, flexShrink: 0 }} />
+                <div>
+                  <span style={{ fontSize: "0.78rem", color: "var(--muted-foreground)" }}>بیماری‌ها: </span>
+                  <span style={{ fontSize: "0.78rem", color: "var(--foreground)" }}>
+                    {profile.diseases.map((id) => diseaseOptions.find((d) => d.id === id)?.label).filter(Boolean).join("، ")}
+                  </span>
                 </div>
-              )}
-            </div>
-          )}
+              </div>
+            )}
+          </div>
         </motion.div>
 
         {/* Actions */}
@@ -188,7 +174,7 @@ export function ProfileTab({
           transition={{ delay: 0.1 }}
           className="flex flex-col gap-2 mb-4"
         >
-          {profile && (
+          {profile ? (
             <button
               onClick={onRegenerate}
               className="flex items-center justify-between p-4 rounded-2xl transition-all active:scale-95"
@@ -210,6 +196,33 @@ export function ProfileTab({
                   </p>
                   <p style={{ fontSize: "0.72rem", color: "var(--muted-foreground)" }}>
                     بر اساس اطلاعات جدید خانواده
+                  </p>
+                </div>
+              </div>
+              <ChevronLeft size={16} color="var(--muted-foreground)" />
+            </button>
+          ) : (
+            <button
+              onClick={onNavigateToQuestionnaire}
+              className="flex items-center justify-between p-4 rounded-2xl transition-all active:scale-95"
+              style={{
+                backgroundColor: "#FDEDEC",
+                border: "1px solid #F5C6CB",
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center"
+                  style={{ backgroundColor: "#C0392B" }}
+                >
+                  <ClipboardList size={18} color="white" />
+                </div>
+                <div className="text-right">
+                  <p style={{ fontSize: "0.85rem", fontWeight: 600, color: "#C0392B" }}>
+                    پر کردن پرسشنامه
+                  </p>
+                  <p style={{ fontSize: "0.72rem", color: "var(--muted-foreground)" }}>
+                    ابتدا اطلاعات خانواده خود را ثبت کنید
                   </p>
                 </div>
               </div>

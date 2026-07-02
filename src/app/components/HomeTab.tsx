@@ -6,6 +6,7 @@ import {
   TrendingUp,
   ChevronLeft,
   Clock,
+  Edit3,
 } from "lucide-react";
 import { UserData } from "../api";
 import { UserProfile, ChecklistItem, ActionItem, toPersianNumber } from "./data";
@@ -90,7 +91,7 @@ export function HomeTab({
               <p
                 style={{ fontSize: "1rem", fontWeight: 600, color: "var(--foreground)" }}
               >
-                پرسشنامه خانواده را تکمیل کنید
+                پرسشنامه را تکمیل کنید
               </p>
               <p
                 className="mt-1"
@@ -101,7 +102,7 @@ export function HomeTab({
             </div>
             <button
               onClick={onNavigateToQuestionnaire}
-              className="px-8 py-3.5 rounded-2xl text-white transition-all active:scale-95"
+              className="px-8 py-3.5 rounded-2xl text-white transition-all active:scale-95 flex items-center gap-2"
               style={{
                 backgroundColor: "var(--primary)",
                 fontSize: "0.95rem",
@@ -109,7 +110,7 @@ export function HomeTab({
                 fontFamily: "'Vazirmatn', sans-serif",
               }}
             >
-              شروع پرسشنامه
+              پر کردن پرسشنامه
             </button>
           </motion.div>
         ) : (
