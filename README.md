@@ -6,7 +6,9 @@ A personalized crisis preparedness platform designed to help families prepare fo
 
 ## 📌 Project Overview
 
-Tik is a web-based application that helps individuals and families prepare for emergency situations through personalized planning.
+Tik is a full-stack web application that helps individuals and families prepare for emergency situations through personalized planning and secure profile management.
+
+The system allows users to create an account, build a household profile, and securely store their preparedness information.
 
 The system collects information about household members and special conditions, such as:
 
@@ -14,16 +16,23 @@ The system collects information about household members and special conditions, 
 * 👵🏻 Elderly family members
 * 🐱 Pets
 * 💊 Medical conditions
-* ♿ Special care requirements
+* 🏠 Residence conditions
 
-Based on this information, Tik automatically generates:
+Based on each household's characteristics, Tik automatically generates personalized emergency resources.
 
-* ✅ Personalized emergency supply checklists
-* 📋 Family-specific preparedness plans
-* ⚡ Critical actions before, during, and after a crisis
-* 🎯 Priority-based emergency recommendations
+The platform currently provides:
 
-The current version focuses on **war-related emergency preparedness**, helping families organize supplies and understand essential actions during critical situations.
+- ✅ Personalized emergency supply checklists
+- ⚡ Before, during, and after crisis action plans
+- 👤 Secure user accounts and profile management
+- 📊 Readiness dashboard
+- 📄 Multi-format exports
+- 💾 Persistent data storage
+- 🔐 Authentication and secure access
+
+The current version focuses on **war-related emergency preparedness**,helping families organize supplies and understand essential actions during critical situations.
+
+Tik is designed with a scalable architecture that enables continuous expansion through new crisis scenarios, advanced emergency management features, and future service integrations.
 
 ---
 
@@ -62,7 +71,7 @@ Each item can be tracked and marked as completed to monitor preparedness progres
 
 ---
 
-### ⚡ Crisis Action Guidance
+### 🚨 Crisis Action Guidance
 Receive structured recommendations for every phase of a crisis situation:
 
 #### 🛡️ Before a Crisis
@@ -71,13 +80,13 @@ Receive structured recommendations for every phase of a crisis situation:
 - Shelter identification
 - Resource preparation
 
-#### 🚨 During a Crisis
+#### ⚡ During a Crisis
 - Immediate safety actions
 - Communication procedures
 - Shelter protocols
 - Family coordination guidelines
 
-#### 🌱 After a Crisis
+#### 🔄 After a Crisis
 - Damage assessment
 - Family accountability checks
 - Access to emergency resources
@@ -85,15 +94,21 @@ Receive structured recommendations for every phase of a crisis situation:
 
 ---
 
-### 🎯 Family-Oriented Recommendations
-Unlike generic preparedness guides, Tik adapts recommendations according to:
+### 🔐 Secure Authentication
 
-- Family composition
-- Health conditions
-- Vulnerable members
-- Special care requirements
+Secure authentication ensures that each user's emergency data remains private and accessible only to authorized users. Household information, preparedness plans, and generated checklists are safely managed through a protected account system.
 
-This allows users to focus only on relevant preparations.
+- User registration
+- Secure login
+- JWT-based authentication
+- Password hashing using bcrypt
+- Persistent user sessions
+
+---
+
+### 💾 Persistent Data Storage
+
+User information, household profiles, generated checklists, and emergency plans are securely stored in a local SQLite database through the backend API.
 
 ---
 
@@ -104,6 +119,21 @@ Monitor preparedness progress in real time:
 - View remaining tasks
 - Measure overall readiness level
 - Maintain organized preparation plans
+
+---
+
+### 👤 Household Profile Management
+
+Users can securely manage their household profile.
+
+Profile includes:
+
+- Family members
+- Children
+- Elderly
+- Medical conditions
+- Pets
+- Emergency information
 
 ---
 
@@ -143,21 +173,39 @@ Built with modern frontend technologies to provide:
 
 ## 📱 Application Preview
 
-### 👨‍👩‍👧‍👦 Questionnaire – Step 2
-Family Information & Household Assessment
+### 🔐 Login
 
-![Questionnaire Step 2](./screenshots/mockups/Tik-QuestionnaireStep2.png)
+Secure authentication system with user registration and login, providing safe access to personalized emergency preparedness data.
 
----
-
-### 💊 Questionnaire – Step 3
-Medical Conditions & Special Care Requirements
-
-![Questionnaire Step 3](./screenshots/mockups/Tik-QuestionnaireStep3.png)
+![Login](./screenshots/mockups/Tik-Login.png)
 
 ---
 
-### ✅ Personalized Emergency Checklist
+### 📝 Questionnaire
+
+A guided multi-step assessment that collects household information to generate personalized emergency plans.
+
+![Questionnaire](./screenshots/mockups/Tik-Questionnaire.png)
+
+---
+
+### 🏠 Home Dashboard
+
+A centralized dashboard that provides quick access to preparedness status, emergency resources, and the application's main features.
+
+![Home Dashboard](./screenshots/mockups/Tik-HomeDashboard.png)
+
+---
+
+### 👤 Profile
+
+Manage household information, review personal details, and update preparedness data at any time.
+
+![Profile](./screenshots/mockups/Tik-Profile.png)
+
+---
+
+### ✅ Emergency Checklist
 
 Customized supplies and preparedness items generated based on household needs.
 
@@ -165,24 +213,19 @@ Customized supplies and preparedness items generated based on household needs.
 
 ---
 
-### 🛡️ Before-Crisis Action Plan
-Essential preparations and preventive measures to improve readiness.
+### 🚨 Action Plans
 
-![Before-Crisis Actions](./screenshots/mockups/Tik-ActionsBefore.png)
+Personalized guidance covering essential actions before, during, and after emergency situations.
 
----
-
-### 🚨 During-Crisis Action Plan
-Critical actions and safety procedures during emergency situations.
-
-![During-Crisis Actions](./screenshots/mockups/Tik-ActionsDuring.png)
+![Actions](./screenshots/mockups/Tik-Actions.png)
 
 ---
 
-### 🌱 After-Crisis Action Plan
-Recovery guidance and post-crisis stabilization recommendations.
+### 🧰 Tools
 
-![After-Crisis Actions](./screenshots/mockups/Tik-ActionsAfter.png)
+Access useful emergency utilities, preparedness resources, and supporting tools designed to improve household readiness.
+
+![Tools](./screenshots/mockups/Tik-Tools.png)
 
 ---
 
@@ -191,17 +234,13 @@ Recovery guidance and post-crisis stabilization recommendations.
 ```text
 Tik/
 │
+├── server/
+│
 ├── src/
 │   │
 │   ├── app/
 │   │   ├── components/
-│   │   │   ├── SplashScreen.tsx
-│   │   │   ├── Questionnaire.tsx
-│   │   │   ├── ChecklistView.tsx
-│   │   │   ├── ActionsView.tsx
-│   │   │   ├── DownloadModal.tsx
-│   │   │   └── data.ts
-│   │   │
+│   │   ├── api.ts
 │   │   └── App.tsx
 │   │
 │   ├── styles/
@@ -220,28 +259,84 @@ Tik/
 
 ---
 
+## 🏗️ System Architecture
+
+Tik follows a modern full-stack architecture that separates the presentation layer, business logic, and data storage. This modular design improves maintainability, scalability, and makes future feature development significantly easier.
+
+<div align="center">
+
+    User
+    │
+    ▼
+    ┌────────────────────────────────┐
+    │      React + TypeScript UI     │
+    │        (Frontend - Vite)       │
+    └────────────────────────────────┘
+    │
+    RESTful API (JSON)
+    │
+    ▼
+    ┌────────────────────────────────┐
+    │        Express.js Server       │
+    │      Authentication & APIs     │
+    └────────────────────────────────┘
+    │
+    ▼
+    ┌────────────────────────────────┐
+    │         SQLite Database        │
+    │  Users • Profiles • Checklists │
+    │    Actions • Emergency Data    │
+    └────────────────────────────────┘
+
+</div>
+
+### Architecture Highlights
+
+- ⚛️ **React + TypeScript** powers a responsive, mobile-first user interface.
+- 🔌 **RESTful APIs** enable communication between the frontend and backend using JSON.
+- ⚙️ **Express.js** handles business logic, authentication, and data processing.
+- 🔐 **JWT Authentication** secures user sessions, while **bcryptjs** protects user passwords.
+- 🗄️ **SQLite** stores user accounts, household profiles, generated checklists, emergency plans, and application data.
+- 📦 The modular architecture makes it easy to extend the platform with new emergency scenarios, cloud synchronization, notifications, and additional services in future releases.
+
+---
+
 ## 🛠️ Technologies
 
-### Frontend
+### ⚙️ Backend
 
-* React
-* TypeScript
-* Vite
-* Tailwind CSS
+- Node.js
+- Express.js
+- SQLite
+- better-sqlite3
+- jsonwebtoken
+- bcryptjs
 
-### UI & Animation
+### 💻 Frontend
 
-* Motion
-* Lucide React
-* Sonner
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
 
-### Utilities
+### 🔌 APIs
 
-* React Hook Form
-* Date-fns
-* Recharts
-* Class Variance Authority
-* Tailwind Merge
+- RESTful API
+- JSON-based communication
+
+### 🎨 UI & Animation
+
+- Motion
+- Lucide React
+- Sonner
+
+### 🧰 Utilities
+
+- React Hook Form
+- Date-fns
+- Recharts
+- Class Variance Authority
+- Tailwind Merge
 
 ---
 
@@ -264,18 +359,47 @@ cd Tik
 ```bash
 npm install
 ```
+---
 
-### 4. Start development server
+## ▶️ Running the Application
+
+You can start the application using either of the following methods.
+
+### Option 1 — Run Frontend & Backend Together (Recommended)
+
+Start both the Express backend and the React frontend with a single command:
+
+```bash
+npm run dev:all
+```
+
+---
+
+### Option 2 — Run Services Separately
+
+#### Start the backend server
+
+```bash
+npm run server
+```
+
+#### Open a second terminal and start the frontend
 
 ```bash
 npm run dev
 ```
 
-### 5. Open browser
+---
+
+### Open the application
+
+Once the development servers are running, open:
 
 ```text
 http://localhost:5173
 ```
+
+The frontend will automatically communicate with the Express backend running in the background.
 
 ---
 
@@ -284,7 +408,7 @@ http://localhost:5173
 ```bash
 npm run build
 ```
-The production-ready files will be generated inside:
+The production-ready frontend files will be generated inside:
 
 ```bash
 dist/
@@ -294,34 +418,21 @@ dist/
 
 ## 🔮 Planned Features
 
-### 🔐 Authentication & User Accounts
-Enable users to create secure accounts and access their emergency plans from any device.
+### ☁️ Cloud Synchronization
+
+Keep preparedness data available across multiple devices through secure cloud storage.
 
 Planned capabilities:
 
-- User registration
-- Login & logout
-- Password recovery
-- Secure sessions
-- Profile synchronization
-
----
-
-### ☁️ Cloud Storage & Synchronization
-Store emergency data safely in the cloud.
-
-Features under consideration:
-
-- Checklist synchronization
-- Automatic backup
+- Automatic data synchronization
+- Cloud backup & recovery
 - Multi-device access
-- Secure data storage
-
-Users will never lose their preparedness information.
+- Secure online storage
 
 ---
 
 ### 👨‍👩‍👧 Advanced Household Management
+
 Expand profile capabilities beyond a single questionnaire.
 
 Future improvements:
@@ -335,6 +446,7 @@ Future improvements:
 ---
 
 ### 🛡️ War Preparedness Expansion
+
 Introduce advanced preparedness tools specifically designed for conflict and wartime scenarios.
 
 Planned features include:
@@ -350,7 +462,21 @@ Planned features include:
 
 ---
 
+### 📦 Emergency Inventory Management
+
+Allow users to maintain a digital inventory of emergency supplies.
+
+Future capabilities:
+
+- Track owned emergency items
+- Monitor quantities
+- Record expiration dates
+- Receive replenishment reminders
+
+---
+
 ### 📍 Nearby Emergency Resources
+
 Help users identify critical services during emergencies.
 
 Potential integrations:
@@ -364,6 +490,7 @@ Potential integrations:
 ---
 
 ### 🚨 Smart Alerts & Notifications
+
 Keep users informed and prepared.
 
 Planned notifications:
@@ -376,19 +503,8 @@ Planned notifications:
 
 ---
 
-### 🌐 Offline Emergency Mode
-Ensure access to critical information even when internet connectivity is unavailable.
-
-Planned capabilities:
-
-- Offline checklist access
-- Cached emergency instructions
-- Downloadable preparedness guides
-- Offline household information
-
----
-
 ### 🤖 Intelligent Recommendation Engine
+
 Use household data to provide smarter preparedness suggestions.
 
 Future versions may offer:
@@ -402,6 +518,7 @@ Future versions may offer:
 ---
 
 ### 🌍 Multi-Crisis Support
+
 Although Tik currently focuses on wartime preparedness, future versions may support additional crisis scenarios:
 
 - 🌎 Earthquakes
@@ -410,6 +527,7 @@ Although Tik currently focuses on wartime preparedness, future versions may supp
 - 🌪️ Severe weather events
 - ⚠️ Infrastructure disruptions
 - 🔌 Long-term power outages
+- ☣️ Hazardous material incidents
 
 Each scenario will provide specialized checklists and action plans.
 
@@ -424,6 +542,8 @@ The main objective of Tik is to improve family preparedness by:
 * Organizing essential supplies
 * Increasing awareness of emergency procedures
 * Helping families create practical preparedness plans
+* Personalized household profiles
+* Long-term preparedness management
 
 ---
 
@@ -435,11 +555,12 @@ The project follows an iterative development process where new features are cont
 
 Current development focuses on:
 
-* Requirement analysis
-* User-centered design
-* MVP development
-* Incremental feature implementation
-* Future scalability
+- Full-stack architecture
+- Authentication
+- Database integration
+- REST API development
+- User profile management
+- Scalable system architecture
 
 ---
 
