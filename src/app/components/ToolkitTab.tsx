@@ -461,7 +461,6 @@ function Modal({
         style={{
           backgroundColor: "var(--card)",
           fontFamily: "'Vazirmatn', sans-serif",
-          maxWidth: "430px",
         }}
         dir="rtl"
       >
