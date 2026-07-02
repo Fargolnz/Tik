@@ -85,7 +85,7 @@ export function SplashScreen({ onStart }: SplashScreenProps) {
         </button>
 
         <p className="text-center text-muted-foreground" style={{ fontSize: "0.75rem" }}>
-          Tik v2.0.0
+          Tik v1.0.0
         </p>
       </motion.div>
     </div>

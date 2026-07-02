@@ -158,7 +158,7 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
     {
       icon: <Info size={20} color="#C0392B" />,
       title: "درباره تیک",
-      desc: "نسخه ۲.۰.۰",
+      desc: "نسخه ۱.۰.۰",
       bg: "#FDEDEC",
       onClick: () => setShowAbout(true),
     },
@@ -339,7 +339,7 @@ export function ToolkitTab({ items, actions, profile, onOpenSettings }: ToolkitT
               <ShieldCheck size={32} color="white" />
             </div>
             <p style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--foreground)" }}>تیک</p>
-            <p style={{ fontSize: "0.8rem", color: "var(--muted-foreground)", marginTop: 4 }}>نسخه ۲.۰.۰</p>
+            <p style={{ fontSize: "0.8rem", color: "var(--muted-foreground)", marginTop: 4 }}>نسخه ۱.۰.۰</p>
             <p style={{ fontSize: "0.82rem", color: "var(--muted-foreground)", marginTop: 12, lineHeight: 1.8 }}>
               سامانه هوشمند آمادگی در برابر بحران‌های جنگ
             </p>
