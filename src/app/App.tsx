@@ -780,7 +780,7 @@ function DownloadModal({
           });
         content += "\n";
       }
-      content += `\nپیشرفت: ${items.filter((i) => i.checked).length} از ${items.length} آیتم تهیه شده\n`;
+      content += `\nپیشرفت: ${toPersianNumber(items.filter((i) => i.checked).length)} از ${toPersianNumber(items.length)} آیتم تهیه شده\n`;
     } else {
       content += "برنامه اقدامات اضطراری\n═══════════════════════════\n\n";
       const phases = [
@@ -796,8 +796,9 @@ function DownloadModal({
             content += `  ${action.checked ? "✓" : "○"} ${action.title}\n     ${action.description}\n\n`;
           });
       }
+      content += `\nپیشرفت: ${toPersianNumber(actions.filter((i) => i.checked).length)} از ${toPersianNumber(actions.length)} آیتم تهیه شده\n`;
     }
-    content += `\nتاریخ تهیه: ${new Date().toLocaleDateString("fa-IR")}\n`;
+    content += `\nتهیه‌شده توسط سامانه تیک | ${new Date().toLocaleDateString("fa-IR")}\n`;
     const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -827,7 +828,7 @@ function DownloadModal({
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
 <style>body{font-family:'Vazirmatn',sans-serif;background:#F7F5F0;color:#1A1A2E;max-width:600px;margin:0 auto;padding:24px}h1{color:#C0392B;border-bottom:2px solid #C0392B;padding-bottom:8px}h2{color:#2C3E50;margin-top:24px}.item{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid #EDE9E0}.check{width:20px;height:20px;border:2px solid #ccc;border-radius:4px;flex-shrink:0}.checked{background:#27AE60;border-color:#27AE60}.qty{color:#7A7A8C;font-size:0.85rem}.desc{color:#7A7A8C;font-size:0.85rem;margin-top:4px}.footer{margin-top:32px;color:#7A7A8C;font-size:0.82rem;text-align:center}</style></head><body>
 <h1>${mode === "checklist" ? "📋 چک‌لیست اضطراری شخصی" : "⚡ برنامه اقدامات اضطراری"}</h1>
-<p>خانواده ${profile.familyCount} نفره</p>`;
+<p>برای خانواده ${toPersianNumber(profile.familyCount)} نفره</p>`;
     if (mode === "checklist") {
       const categories = Array.from(new Set(items.map((i) => i.category)));
       for (const cat of categories) {
