@@ -112,7 +112,7 @@ router.post("/send-otp", (req, res) => {
 
 router.post("/verify-otp", (req, res) => {
   try {
-    const { phone, code } = req.body;
+    const { phone, code, create_user } = req.body;
     if (!phone || !code) {
       return res.status(400).json({ error: "Phone and code are required" });
     }
@@ -128,9 +128,13 @@ router.post("/verify-otp", (req, res) => {
     db.prepare("UPDATE otp_codes SET used = 1 WHERE id = ?").run(otp.id);
 
     let user = db.prepare("SELECT * FROM users WHERE phone = ?").get(phone);
-    if (!user) {
+    if (!user && create_user !== false) {
       const result = db.prepare("INSERT INTO users (full_name, phone, password_hash) VALUES (?, ?, ?)").run(`User ${phone.slice(-4)}`, phone, bcrypt.hashSync(phone, 10));
       user = db.prepare("SELECT * FROM users WHERE id = ?").get(result.lastInsertRowid);
+    }
+
+    if (!user) {
+      return res.json({ verified: true });
     }
 
     const token = generateToken(user);

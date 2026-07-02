@@ -81,7 +81,7 @@ export function SplashScreen({ onStart }: SplashScreenProps) {
             fontFamily: "'Vazirmatn', sans-serif",
           }}
         >
-          ورود به سامانه
+          ورود به تیک
         </button>
 
         <p className="text-center text-muted-foreground" style={{ fontSize: "0.75rem" }}>

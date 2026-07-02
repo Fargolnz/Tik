@@ -104,8 +104,8 @@ export const api = {
         body: JSON.stringify(data),
       }),
 
-    verifyOtp: (data: { phone: string; code: string }) =>
-      request<{ user: UserData; token: string; is_new: boolean }>(
+    verifyOtp: (data: { phone: string; code: string; create_user?: boolean }) =>
+      request<{ user: UserData; token: string; is_new: boolean } | { verified: boolean }>(
         "/auth/verify-otp",
         {
           method: "POST",

@@ -135,7 +135,7 @@ export function AuthPage({ onAuthenticated }: AuthPageProps) {
     }
     setLoading(true);
     try {
-      await api.auth.verifyOtp({ phone: regPhone, code: regOtpCode });
+      await api.auth.verifyOtp({ phone: regPhone, code: regOtpCode, create_user: false });
       setRegOtpVerified(true);
       setRegStep("password");
       setSuccess("شماره تلفن تأیید شد");
